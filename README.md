@@ -36,6 +36,11 @@ pip install PyAudio-0.2.11-cp<python version>-cp<python version>-win<64 or 32 bi
 ```bash
 pip install -r requirements.txt
 ```
+# Configuring Google Calendar API
+- Use this [link](https://developers.google.com/calendar/quickstart/python) to enable the Google Calendar Api
+- Click the button "Enable the Google Calendar API"
+- After downloading credentials.json put this file in project root
+- After first running you'll need to accept Google privacy. (Even if browser will show you warning)
 
 ## Usage
 While you activate your virtual environments, you'll need to run it by typing in terminal from project root

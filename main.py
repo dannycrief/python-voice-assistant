@@ -162,6 +162,7 @@ def note(text):
 
 
 WAKE = "hey mark"
+STOP = ["bye", "see you", "goodbye"]
 CALENDAR_STRS = ["what do i have", "do i have plans", "am i busy"]
 NOTE_STRS = ["make a note", "write this down", "remember this"]
 SERVICE = authenticate_google()
@@ -171,7 +172,7 @@ while True:
     text = get_audio()
 
     if text.count(WAKE) > 0:
-        speak("OK, what do you want me to do?")
+        speak("Hello, what do you want me to do?")
         text = get_audio()
         for phrase in CALENDAR_STRS:
             if phrase in text:
@@ -188,3 +189,7 @@ while True:
                 note(note_text)
                 speak("I've made a note of that.")
 
+    for phrase in STOP:
+        if phrase in text:
+            speak("See you soon!")
+            break

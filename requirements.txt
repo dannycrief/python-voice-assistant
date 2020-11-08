@@ -27,3 +27,5 @@ soupsieve==2.0.1
 SpeechRecognition==3.8.1
 uritemplate==3.0.1
 urllib3==1.25.11
+
+pyttsx3~=2.90

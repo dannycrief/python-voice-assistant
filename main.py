@@ -18,6 +18,10 @@ MONTHS = ['january', 'february', 'march', 'april', 'may', 'june',
           'july', 'august', 'september', 'october', 'november', 'december']
 DAYS = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday']
 DAY_EXTENSIONS = ["nd", "rd", "th", "st"]
+WAKE = "hey mark"
+STOP = ["bye", "see you", "goodbye"]
+CALENDAR_STRS = ["what do i have", "do i have plans", "am i busy"]
+NOTE_STRS = ["make a note", "write this down", "remember this"]
 
 
 def speak(text):
@@ -40,9 +44,6 @@ def get_audio():
 
 
 def authenticate_google():
-    """Shows basic usage of the Google Calendar API.
-    Prints the start and name of the next 10 events on the user's calendar.
-    """
     creds = None
 
     if os.path.exists('token.pickle'):
@@ -161,35 +162,31 @@ def note(text):
     subprocess.Popen(["notepad.exe", os.path.join("notes", file_name)])
 
 
-WAKE = "hey mark"
-STOP = ["bye", "see you", "goodbye"]
-CALENDAR_STRS = ["what do i have", "do i have plans", "am i busy"]
-NOTE_STRS = ["make a note", "write this down", "remember this"]
 SERVICE = authenticate_google()
-
-while True:
-    print("Listening")
-    text = get_audio()
-
-    if text.count(WAKE) > 0:
-        speak("Hello, what do you want me to do?")
+if __name__ == '__main__':
+    while True:
+        print("Listening")
         text = get_audio()
-        for phrase in CALENDAR_STRS:
-            if phrase in text:
-                date = get_date(text)
-                if date:
-                    get_events(date, SERVICE)
-                else:
-                    speak("I don't understand")
 
-        for phrase in NOTE_STRS:
-            if phrase in text:
-                speak("What would you like me to write down?")
-                note_text = get_audio()
-                note(note_text)
-                speak("I've made a note of that.")
+        if text.count(WAKE) > 0:
+            speak("Hello, what do you want me to do?")
+            text = get_audio()
+            for phrase in CALENDAR_STRS:
+                if phrase in text:
+                    date = get_date(text)
+                    if date:
+                        get_events(date, SERVICE)
+                    else:
+                        speak("I don't understand")
 
-    for phrase in STOP:
-        if phrase in text:
-            speak("See you soon!")
-            break
+            for phrase in NOTE_STRS:
+                if phrase in text:
+                    speak("What would you like me to write down?")
+                    note_text = get_audio()
+                    note(note_text)
+                    speak("I've made a note of that.")
+
+        for phrase in STOP:
+            if phrase in text:
+                speak("See you soon!")
+                break

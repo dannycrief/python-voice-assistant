@@ -187,9 +187,4 @@ while True:
                 note_text = get_audio()
                 note(note_text)
                 speak("I've made a note of that.")
-"""
-# id:
-# 705265415406-84ln1nt38i1s1ru52sst8m9ivejc8pe0.apps.googleusercontent.com
-# secret:
-# _bviOAExrSTdt1HO-wonaGEV
-"""
+

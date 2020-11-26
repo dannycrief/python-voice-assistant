@@ -6,7 +6,7 @@ from VA_config import speak, get_audio
 from VA_note import note
 from googleAPI.googleCalendar.google_calendarAPI import authenticate_google_calendar
 from googleAPI.googleGmail.google_gmail_API import authenticate_google_gmail
-from texttoint import text2int
+
 
 WAKE = "hello mark"
 STOP = ["bye", "see you", "goodbye"]

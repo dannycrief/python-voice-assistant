@@ -6,6 +6,7 @@ from VA_config import speak, get_audio
 from VA_note import note
 from googleAPI.googleCalendar.google_calendarAPI import authenticate_google_calendar
 from googleAPI.googleGmail.google_gmail_API import authenticate_google_gmail
+from texttoint import text2int
 
 WAKE = "hello mark"
 STOP = ["bye", "see you", "goodbye"]
@@ -50,12 +51,13 @@ def get_events(date, service):
 
 
 def get_messages_from_gmail(service):
-    results = service.users().messages().list(userId='me', labelIds=['INBOX'], q="is:unread").execute()
+    results = service.users().messages().list(userId='me',
+                                              labelIds=['INBOX'],
+                                              q="is:unread").execute()
     messages = results.get('messages', [])
 
     if not messages:
         print('No messages found.')
-        return 'No messages found.'
     else:
         gmails = []
         messages_count = 0
@@ -71,17 +73,24 @@ def get_messages_from_gmail(service):
         message_choice = get_audio().lower()
 
         if message_choice == "yes":
-            number_of_emails = int(input("How many messages you want to display:")) | get_audio()
-            for gmail in gmails[:number_of_emails]:
-                email_data = gmail["payload"]["headers"]
-                for values in email_data:
-                    name = values["name"]
-                    if name == "From":
-                        from_name = values["value"]
-                        print(f"You have a new message from: {from_name}")
-                        speak(f"You have a new message from: {from_name}")
-                        print(f"\t{gmail['snippet'][:50]} etc.")
-                        speak(f"{gmail['snippet'][:50]} etc.")
+            speak("How many messages you want to display:")
+            print("How many messages you want to display:")
+            number_of_emails = int(get_audio())
+            if number_of_emails == isinstance(number_of_emails, int):
+                for gmail in gmails[:number_of_emails]:
+                    email_data = gmail["payload"]["headers"]
+                    for values in email_data:
+                        name = values["name"]
+                        if name == "From":
+                            from_name = values["value"]
+                            print(f"You have a new message from: {from_name}")
+                            speak(f"You have a new message from: {from_name}")
+                            print(f"\t{gmail['snippet'][:50]} etc.")
+                            speak(f"{gmail['snippet'][:50]} etc.")
+            else:
+                print("I didn't understand")
+                speak("I didn't understand")
+
 
 
 to_stop = []

@@ -1,19 +1,20 @@
-from __future__ import print_function
-
 import pytz
 import datetime
 
 from VA_date import get_date
 from VA_config import speak, get_audio
 from VA_note import note
-from google_auth import authenticate_google
+from googleAPI.googleCalendar.google_calendarAPI import authenticate_google_calendar
+from googleAPI.googleGmail.google_gmail_API import authenticate_google_gmail
 
 WAKE = "hello mark"
 STOP = ["bye", "see you", "goodbye"]
-CALENDAR_STRS = ["what do i have", "do i have plans", "am i busy"]
+CALENDAR_STRS = ["what do i have", "do i have plans", "do i have any plans", "am i busy"]
+GMAIL_STRS = ["do i have new messages", "do i have messages"]
 NOTE_STRS = ["make a note", "write this down", "remember this"]
 
-SERVICE = authenticate_google()
+CALENDAR_SERVICE = authenticate_google_calendar()
+GMAIL_SERVICE = authenticate_google_gmail()
 
 
 def get_events(date, service):
@@ -48,6 +49,41 @@ def get_events(date, service):
             speak(event["summary"] + " at " + start_time)
 
 
+def get_messages_from_gmail(service):
+    results = service.users().messages().list(userId='me', labelIds=['INBOX'], q="is:unread").execute()
+    messages = results.get('messages', [])
+
+    if not messages:
+        print('No messages found.')
+        return 'No messages found.'
+    else:
+        gmails = []
+        messages_count = 0
+        for message in messages:
+            msg = service.users().messages().get(userId='me', id=message['id']).execute()
+            messages_count += 1
+            gmails.append(msg)
+
+        print(f"You have {str(messages_count)} unread messages.")
+        speak(f"You have {str(messages_count)} unread messages.")
+        print("Would you like to see your messages: ")
+        speak("Would you like to see your messages: ")
+        message_choice = get_audio().lower()
+
+        if message_choice == "yes":
+            number_of_emails = int(input("How many messages you want to display:")) | get_audio()
+            for gmail in gmails[:number_of_emails]:
+                email_data = gmail["payload"]["headers"]
+                for values in email_data:
+                    name = values["name"]
+                    if name == "From":
+                        from_name = values["value"]
+                        print(f"You have a new message from: {from_name}")
+                        speak(f"You have a new message from: {from_name}")
+                        print(f"\t{gmail['snippet'][:50]} etc.")
+                        speak(f"{gmail['snippet'][:50]} etc.")
+
+
 to_stop = []
 
 if __name__ == '__main__':
@@ -63,7 +99,7 @@ if __name__ == '__main__':
                 if phrase in text:
                     date = get_date(text)
                     if date:
-                        get_events(date, SERVICE)
+                        get_events(date, CALENDAR_SERVICE)
                     else:
                         speak("I don't understand")
 
@@ -73,6 +109,10 @@ if __name__ == '__main__':
                     note_text = get_audio()
                     note(note_text)
                     speak("I've made a note of that.")
+
+            for phrase in GMAIL_STRS:
+                if phrase in text:
+                    get_messages_from_gmail(GMAIL_SERVICE)
 
             for phrase in STOP:
                 if phrase in text:

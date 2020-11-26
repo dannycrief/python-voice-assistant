@@ -1,5 +1,7 @@
-token.pickle
-credentials.json
+googleAPI/googleCalendar/token.pickle
+googleAPI/googleCalendar/credentials.json
+googleAPI/googleGmail/token.pickle
+googleAPI/googleGmail/credentials.json
 PyAudio-0.2.11-cp39-cp39-win_amd64.whl
 notes/
 notes
@@ -393,7 +395,6 @@ out
 gen
 ### Python template
 # Byte-compiled / optimized / DLL files
-__pycache__/
 *.py[cod]
 *$py.class
 
@@ -401,7 +402,6 @@ __pycache__/
 *.so
 
 # Distribution / packaging
-.Python
 build/
 develop-eggs/
 dist/
@@ -450,7 +450,6 @@ cover/
 *.pot
 
 # Django stuff:
-*.log
 local_settings.py
 db.sqlite3
 db.sqlite3-journal
@@ -500,7 +499,6 @@ celerybeat.pid
 
 # Environments
 .env
-.venv
 env/
 venv/
 ENV/
@@ -530,4 +528,3 @@ dmypy.json
 
 # Cython debug symbols
 cython_debug/
-

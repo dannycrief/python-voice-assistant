@@ -1,12 +1,13 @@
-googleAPI/googleCalendar/token.pickle
-googleAPI/googleCalendar/credentials.json
-googleAPI/googleGmail/token.pickle
-googleAPI/googleGmail/credentials.json
+*token.pickle
+*credentials.json
 PyAudio-0.2.11-cp39-cp39-win_amd64.whl
 notes/
 notes
 *-note.txt
 *api.txt
+googleAPI/googleMaps/chromedriver.exe
+googleAPI/googleMaps/road.json
+my-key.json
 # Created by .ignore support plugin (hsz.mobi)
 ### VirtualEnv template
 # Virtualenv

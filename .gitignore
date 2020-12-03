@@ -6,8 +6,9 @@ notes
 *-note.txt
 *api.txt
 googleAPI/googleMaps/chromedriver.exe
-googleAPI/googleMaps/road.json
+road.json
 my-key.json
+city.json
 # Created by .ignore support plugin (hsz.mobi)
 ### VirtualEnv template
 # Virtualenv

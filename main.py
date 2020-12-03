@@ -78,7 +78,7 @@ def get_messages_from_gmail(service):
             speak("How many messages you want to display:")
             print("How many messages you want to display:")
             number_of_emails = int(get_audio())
-            if number_of_emails == isinstance(number_of_emails, int):
+            if number_of_emails == number_of_emails:
                 for gmail in gmails[:number_of_emails]:
                     email_data = gmail["payload"]["headers"]
                     for values in email_data:

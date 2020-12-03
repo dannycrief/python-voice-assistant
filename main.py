@@ -6,13 +6,15 @@ from VA_config import speak, get_audio
 from VA_note import note
 from googleAPI.googleCalendar.google_calendarAPI import authenticate_google_calendar
 from googleAPI.googleGmail.google_gmail_API import authenticate_google_gmail
-
+from googleAPI.googleMaps.google_maps_API import get_google_map_travel
 
 WAKE = "hello mark"
 STOP = ["bye", "see you", "goodbye"]
 CALENDAR_STRS = ["what do i have", "do i have plans", "do i have any plans", "am i busy"]
 GMAIL_STRS = ["do i have new messages", "do i have messages"]
 NOTE_STRS = ["make a note", "write this down", "remember this"]
+GMAPS_STRS = ["how can i get", "create a road", "create road", "how long do i need to ride"]
+
 
 CALENDAR_SERVICE = authenticate_google_calendar()
 GMAIL_SERVICE = authenticate_google_gmail()
@@ -92,23 +94,21 @@ def get_messages_from_gmail(service):
                 speak("I didn't understand")
 
 
-
 to_stop = []
 
 if __name__ == '__main__':
     print("Listening")
-    text = get_audio()
-    if text.count(WAKE) > 0:
-        speak("Hello, what do you want me to do?")
-        while True:
-            print("Listening")
+    while True:
+        text = get_audio()
+        if text.count(WAKE) > 0:
+            speak("Hello, what do you want me to do?")
             text = get_audio()
-
             for phrase in CALENDAR_STRS:
                 if phrase in text:
                     date = get_date(text)
                     if date:
-                        get_events(date, CALENDAR_SERVICE)
+                        # get_events(date, CALENDAR_SERVICE)
+                        pass
                     else:
                         speak("I don't understand")
 
@@ -122,6 +122,26 @@ if __name__ == '__main__':
             for phrase in GMAIL_STRS:
                 if phrase in text:
                     get_messages_from_gmail(GMAIL_SERVICE)
+
+            for phrase in GMAPS_STRS:
+                if phrase in text:
+                    speak("Type your current address. Address first, city (optional) and postal code (optional)")
+                    user_address_from = input("Type your current address (address, <city>, <postal code>): ")
+                    speak("Where you want to go (address, city)")
+                    user_address_to = input("Where you want to go (address, city): ")
+                    road_data = get_google_map_travel(user_address_from, user_address_to)
+                    if road_data:
+                        travel_duration = road_data[0]
+                        travel_options = road_data[1]
+                        speak(
+                            f"Your travel will take a {travel_duration}. Do you want me to tell you travel options?")
+                        if get_audio() == "yes" or input("Do you want me to tell you travel options? "):
+                            for option in travel_options:
+                                print(option)
+                                speak(option)
+                        else:
+                            speak("Ok")
+                            print("Ok")
 
             for phrase in STOP:
                 if phrase in text:

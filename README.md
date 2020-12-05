@@ -3,12 +3,11 @@
 ![GitHub issues](https://img.shields.io/github/issues/dannycrief/python-voice-assistant)
 ![GitHub last commit](https://img.shields.io/github/last-commit/dannycrief/python-voice-assistant)
 - Mark Voice Assistant is a Python voice assistant project on SpeechRecognition, pyttsx3 and GoogleAPI
-- At the moment Mark knows to read data from your Google Calendar (from first running you'll be redirected to Google login page)
-and write data to file .txt using notepad.exe
+- Mark knows to read data from your Google Calendar (from first running you'll be redirected to Google login page), read email from your Gmail, build road using Google Maps, open browse, and write data to file .txt using notepad.exe
 
 ## Installation
-- clone project
-- create virtual environments in the root of project and activate it:
+- Clone project
+- Create virtual environments in the root of project and activate it:
 - Windows:
 ```bash
 pip install virtualenv
@@ -23,7 +22,7 @@ virtualenv virtualenv_name
 source virtualenv_name/bin/activate
 ```
 - To make Mark Voice Assistant work correctly you'll be need to PyAudio library
-- check you python version
+- Check you python version
 ```bash
 python --version
 ```
@@ -36,13 +35,30 @@ pip install PyAudio-0.2.11-cp<python version>-cp<python version>-win<64 or 32 bi
 ```bash
 pip install -r requirements.txt
 ```
-# Configuring Google Calendar API
+## Configuring Google Calendar API
 - Use this [link](https://developers.google.com/calendar/quickstart/python) to enable the Google Calendar Api
 - Click the button "Enable the Google Calendar API"
 - After downloading credentials.json put this file in project root
 - After first running you'll need to accept Google privacy. (Even if browser will show you warning)
 
-## Usage
+## Configuring Google  Gmail API
+- Use this [link](https://developers.google.com/gmail/api/quickstart/python) to enable the Google Calendar Api
+- Click the button "Enable the Google Calendar API"
+- After downloading credentials.json put this file in project root
+- After first running you'll need to accept Google privacy. (Even if browser will show you warning)
+
+## Configuring Google  Maps API
+- Go to [Google Cloud Console](https://console.cloud.google.com/)
+- Activate next API:
+1. Geocoding API
+2. Directions API
+3. Maps Static API
+4. Distance Matrix API
+5. Geolocation API
+6. Maps Embed API
+- Make sure that you have a billing account set up
+
+### Usage
 While you activate your virtual environments, you'll need to run it by typing in terminal from project root
 ```bash
 python main.py
@@ -51,6 +67,9 @@ python main.py
 -Key phrases:
  1. "what do i have...", "do i have plans...", "am i busy.."
  2. "make a note", "write this down", "remember this"
+ 3. "do i have new messages", "do i have messages"
+ 4. "how can i get", "create a road", "create road", "how long do i need to ride"
+ 5. "open browser"
 ## Examples using
 - Hey Mark what do I have on Monday 2nd
 - Hey Mark make a note

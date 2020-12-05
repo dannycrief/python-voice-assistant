@@ -1,3 +1,4 @@
+import os
 import pytz
 import datetime
 
@@ -7,6 +8,7 @@ from VA_note import note
 from googleAPI.googleCalendar.google_calendarAPI import authenticate_google_calendar
 from googleAPI.googleGmail.google_gmail_API import authenticate_google_gmail
 from googleAPI.googleMaps.google_maps_API import get_google_map_travel
+from execute_browser.execute_program import start_browser
 
 WAKE = "hello mark"
 STOP = ["bye", "see you", "goodbye"]
@@ -14,7 +16,7 @@ CALENDAR_STRS = ["what do i have", "do i have plans", "do i have any plans", "am
 GMAIL_STRS = ["do i have new messages", "do i have messages"]
 NOTE_STRS = ["make a note", "write this down", "remember this"]
 GMAPS_STRS = ["how can i get", "create a road", "create road", "how long do i need to ride"]
-
+BROWSER_STRS = ["open browser"]
 
 CALENDAR_SERVICE = authenticate_google_calendar()
 GMAIL_SERVICE = authenticate_google_gmail()
@@ -142,6 +144,20 @@ if __name__ == '__main__':
                         else:
                             speak("Ok")
                             print("Ok")
+
+            for phrase in BROWSER_STRS:
+                if phrase in text:
+                    print("Which browser?")
+                    speak("Which browser?")
+                    browser_name = get_audio()
+                    open_browser = start_browser(browser_name)
+                    if open_browser == "Cannot find this browser":
+                        print(open_browser)
+                        speak(open_browser)
+                    else:
+                        print("I've got it. Just a second")
+                        speak("I've got it. Just a second")
+                        os.system(open_browser)
 
             for phrase in STOP:
                 if phrase in text:

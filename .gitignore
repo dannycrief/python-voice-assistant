@@ -5,7 +5,7 @@ notes/
 notes
 *-note.txt
 *api.txt
-googleAPI/googleMaps/chromedriver.exe
+chromedriver.exe
 road.json
 my-key.json
 city.json

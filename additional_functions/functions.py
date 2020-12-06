@@ -30,3 +30,20 @@ def text2int(textnum, numwords={}):
             current = 0
 
     return result + current
+
+
+def get_numbers_from_string(phrase, text):
+    first_number = None
+    second_number = None
+    while len(text) != 0:
+        try:
+            text2int(text)
+        except Exception as e:
+            e = e.__str__().replace("Illegal word: ", "")
+            if e in phrase:
+                first_number = text2int(text.split(phrase)[0])
+                second_number = text2int(text.split(phrase)[1])
+                text = ""
+            else:
+                text = text.replace(e, "")
+    return first_number, second_number

@@ -8,7 +8,8 @@ from VA_note import note
 from googleAPI.googleCalendar.google_calendarAPI import authenticate_google_calendar
 from googleAPI.googleGmail.google_gmail_API import authenticate_google_gmail
 from googleAPI.googleMaps.google_maps_API import get_google_map_travel
-from execute_browser.execute_program import start_browser
+from execute_commands.execute import start_browser
+from execute_commands.execute import execute_math
 
 WAKE = "hello mark"
 STOP = ["bye", "see you", "goodbye"]
@@ -17,6 +18,8 @@ GMAIL_STRS = ["do i have new messages", "do i have messages"]
 NOTE_STRS = ["make a note", "write this down", "remember this"]
 GMAPS_STRS = ["how can i get", "create a road", "create road", "how long do i need to ride"]
 BROWSER_STRS = ["open browser"]
+MATH_STRS = ["add", "plus", "+", "subtract", "minus", "-", "divide", "divided by", "/", "multiply", "multiplied by",
+             "times", "*"]
 
 CALENDAR_SERVICE = authenticate_google_calendar()
 GMAIL_SERVICE = authenticate_google_gmail()
@@ -158,6 +161,16 @@ if __name__ == '__main__':
                         print("I've got it. Just a second")
                         speak("I've got it. Just a second")
                         os.system(open_browser)
+
+            for phrase in MATH_STRS:
+                if phrase in text:
+                    result = execute_math(phrase, text)
+                    if result == "division by zero":
+                        print("Hmm, division by zero is impossible")
+                        speak("Hmm, division by zero is impossible")
+                    else:
+                        print("it is: ", result)
+                        speak(f"it is: {result}")
 
             for phrase in STOP:
                 if phrase in text:

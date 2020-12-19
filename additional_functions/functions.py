@@ -1,3 +1,10 @@
+import getpass
+import os
+import platform
+import shutil
+import distutils.dir_util
+
+
 def text2int(textnum, numwords={}):
     if not numwords:
         units = [
@@ -47,3 +54,47 @@ def get_numbers_from_string(phrase, text):
             else:
                 text = text.replace(e, "")
     return first_number, second_number
+
+
+def get_full_path(filename, search_folder, disk):
+    # dl = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+    disk = f"{disk}:/".upper()
+
+    if platform.system() == "Windows":  # Windows
+        # drives = ["%s:" % d for d in dl if os.path.exists("%s:" % d)]
+        # if disk is not None and disk in drives:
+        #     path = os.path.join(disk)
+        #     return path
+        for root, folders, _ in os.walk(os.path.join(disk, "Users", getpass.getuser())):
+            folders[:] = [d for d in folders if not d[0] == '.']
+            if search_folder in folders:
+                for root_, _, files in os.walk(os.path.join(root, search_folder)):
+                    files = [f for f in files if not f[0] == '.']
+                    find_files = list(filter(lambda elem: filename in elem, files))
+                    if len(find_files) > 0:
+                        return [os.path.join(root_, elem) for elem in find_files]
+
+    elif platform.system() == "Linux":  # Linux
+        return
+    elif platform.system() == "Darwin":  # Mac
+        return
+
+
+def copy_file(source, destination) -> str:
+    try:
+        shutil.copy(source, destination)
+        return "OK"
+    except OSError as exc:
+        return f"Error: {exc}"
+
+
+def copy_directory(source, destination):
+    folder_name = source.split('\\')[-1]
+    destination = os.path.join(destination, folder_name)
+    try:
+        os.mkdir(destination)
+        distutils.dir_util.copy_tree(source, destination)
+    except OSError as exc:
+        return f"Cannot copy directory. Error occurred: {exc}"
+    else:
+        return f"Directory successfully copied to {destination.removesuffix(folder_name)}"

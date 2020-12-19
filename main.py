@@ -5,6 +5,7 @@ import datetime
 from VA_date import get_date
 from VA_config import speak, get_audio
 from VA_note import note
+from additional_functions.functions import copy_file, copy_directory
 from googleAPI.googleCalendar.google_calendarAPI import authenticate_google_calendar
 from googleAPI.googleGmail.google_gmail_API import authenticate_google_gmail
 from googleAPI.googleMaps.google_maps_API import get_google_map_travel
@@ -20,6 +21,7 @@ GMAPS_STRS = ["how can i get", "create a road", "create road", "how long do i ne
 BROWSER_STRS = ["open browser"]
 MATH_STRS = ["add", "plus", "+", "subtract", "minus", "-", "divide", "divided by", "/", "multiply", "multiplied by",
              "times", "*"]
+COPY_STRS = ["copy file", "copy folder", "move file", "move folder"]
 
 CALENDAR_SERVICE = authenticate_google_calendar()
 GMAIL_SERVICE = authenticate_google_gmail()
@@ -79,7 +81,7 @@ def get_messages_from_gmail(service):
         speak("Would you like to see your messages: ")
         message_choice = get_audio().lower()
 
-        if message_choice == "yes":
+        if "yes" in message_choice:
             speak("How many messages you want to display:")
             print("How many messages you want to display:")
             number_of_emails = int(get_audio())
@@ -101,8 +103,8 @@ def get_messages_from_gmail(service):
 
 to_stop = []
 
-if __name__ == '__main__':
-    print("Listening")
+
+def main():
     while True:
         text = get_audio()
         if text.count(WAKE) > 0:
@@ -112,7 +114,7 @@ if __name__ == '__main__':
                 if phrase in text:
                     date = get_date(text)
                     if date:
-                        # get_events(date, CALENDAR_SERVICE)
+                        get_events(date, CALENDAR_SERVICE)
                         pass
                     else:
                         speak("I don't understand")
@@ -176,6 +178,42 @@ if __name__ == '__main__':
                 if phrase in text:
                     to_stop.append(phrase)
 
+            for phrase in COPY_STRS:
+                if phrase in text:
+                    if "copy file" in phrase:
+                        speak("OK, all I need is you paste path to your file")
+                        from_path = input("Path to your file: ")
+                        if os.path.isfile(from_path):
+                            speak("I found it. Paste a path where you want to copy your file")
+                            to_path = input("Path to folder where file will be copied: ")
+                            if os.path.isdir(to_path):
+                                speak("On its way...")
+                                speak("Successfully copied") if copy_file(from_path, to_path) == "OK" else speak(
+                                    "Cannot copy file because of error")
+                            else:
+                                speak("Seriously? Do you want to copy file to file? Think about it")
+                        else:
+                            speak("Selected item must be a file, but not folder")
+                    elif "copy folder" in phrase:
+                        speak("OK, all I need is you paste path to your folder")
+                        from_path = input("Path to your folder")
+                        if os.path.isdir(from_path):
+                            speak("I found it. Paste a path where you want to copy your folder")
+                            to_path = input("Path to folder where folder will be copied: ")
+                            if os.path.isdir(to_path):
+                                speak("On it way...")
+                                speak("Successfully copied") if copy_directory(from_path, to_path) == "OK" else speak(
+                                    "Cannot copy file because of error")
+                            else:
+                                speak("Seriously? Do you want to copy folder to file? Think about it")
+                        else:
+                            speak("Selected item must be a folder, but not file")
+
             if len(to_stop) > 0:
                 speak("See you soon!")
                 break
+
+
+if __name__ == '__main__':
+    print("Listening")
+    main()

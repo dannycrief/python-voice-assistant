@@ -76,12 +76,12 @@ def get_full_path(filename, search_folder, disk):
 
 def get_file_path() -> list:
     speak("OK, all I need is you paste path to your file")
-    from_path = input("Path to your file:\n")
+    from_path = input("Path to your file:\n").replace('"', "")
     if os.path.isfile(from_path):
         speak("I found it. Paste a path where you want to copy your file")
-        to_path = input("Path to folder where file will be copied:\n")
+        to_path = input("Path to folder where file will be copied:\n").replace('"', "")
         if os.path.isdir(to_path):
-            return [from_path.replace('"', ""), to_path.replace('"', "")]
+            return [from_path, to_path]
         else:
             return ["File into file"]
     else:
@@ -98,12 +98,12 @@ def copy_file(source, destination) -> str:
 
 def get_directory_path() -> list:
     speak("OK, all I need is you paste path to your folder")
-    from_path = input("Path to your folder:\n")
+    from_path = input("Path to your folder:\n").replace('"', "")
     if os.path.isdir(from_path):
         speak("I found it. Paste a path where you want to copy your folder")
-        to_path = input("Path to folder where folder will be copied:\n")
+        to_path = input("Path to folder where folder will be copied:\n").replace('"', "")
         if os.path.isdir(to_path):
-            return [from_path.replace('"', ""), to_path.replace('"', "")]
+            return [from_path, to_path]
         else:
             return ["Folder into file"]
     else:

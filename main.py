@@ -1,4 +1,6 @@
 import os
+import random
+
 import pytz
 import datetime
 
@@ -19,10 +21,12 @@ GMAIL_STRS = ["do i have new messages", "do i have messages"]
 NOTE_STRS = ["make a note", "write this down", "remember this"]
 GMAPS_STRS = ["how can i get", "create a road", "create road", "how long do i need to ride"]
 BROWSER_STRS = ["open browser"]
-MATH_STRS = ["add", "plus", "+", "subtract", "minus", "-", "divide", "divided by", "/", "multiply", "multiplied by",
-             "times", "*"]
+MATH_STRS = ["add", "plus", "+", "subtract", "minus", "-", "divide", "divided by",
+             "/", "multiply", "multiplied by", "times", "*"]
 COPY_STRS = ["copy file", "copy folder", "move file", "move folder"]
-
+TIME_NOW_STRS = ["current time", "time now", "what time is it"]
+TIMER_STRS = ["set timer"]
+END_STR = ["See you soon!", "Till next time", "Goodbye", "Bye", "See you"]
 CALENDAR_SERVICE = authenticate_google_calendar()
 GMAIL_SERVICE = authenticate_google_gmail()
 
@@ -174,10 +178,6 @@ def main():
                         print("it is: ", result)
                         speak(f"it is: {result}")
 
-            for phrase in STOP:
-                if phrase in text:
-                    to_stop.append(phrase)
-
             for phrase in COPY_STRS:
                 if phrase in text:
                     if "copy file" in phrase:
@@ -200,10 +200,16 @@ def main():
                             speak("Seriously? Do you want to copy folder to file? Think about it")
                         elif path[0] == "Not a folder":
                             speak("Selected item must be a folder, but not file")
+            for phrase in TIME_NOW_STRS:
+                if phrase in text:
+                    speak(f"Current time is {datetime.datetime.now().strftime('%H:%M')}")
 
-            if len(to_stop) > 0:
-                speak("See you soon!")
-                break
+        for phrase in STOP:
+            if phrase in text:
+                to_stop.append(phrase)
+        if len(to_stop) > 0:
+            speak(random.choice(END_STR))
+            break
 
 
 if __name__ == '__main__':

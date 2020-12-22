@@ -27,3 +27,8 @@ def execute_math(phrase, text):
             return e
     elif phrase in ["multiply", "multiplied by", "times", "*"]:
         return first_number * second_number
+
+
+def set_timer():
+    pass
+

@@ -4,6 +4,7 @@ import speech_recognition as sr
 
 def speak(text):
     engine = pyttsx3.init()
+    print(text)
     engine.say(text)
     engine.runAndWait()
 
@@ -16,6 +17,6 @@ def get_audio():
         try:
             said = r.recognize_google(audio)
             print(said)
-        except Exception as e:
-            print(f"Exception: {e}")
+        except Exception:
+            pass
     return said.lower()

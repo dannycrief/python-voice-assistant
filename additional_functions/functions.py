@@ -1,3 +1,11 @@
+import getpass
+import os
+import platform
+import shutil
+import distutils.dir_util
+from VA_config import speak
+
+
 def text2int(textnum, numwords={}):
     if not numwords:
         units = [
@@ -47,3 +55,68 @@ def get_numbers_from_string(phrase, text):
             else:
                 text = text.replace(e, "")
     return first_number, second_number
+
+
+def get_full_path(filename, search_folder, disk):
+    disk = f"{disk}:/".upper()
+    if platform.system() == "Windows":  # Windows
+        for root, folders, _ in os.walk(os.path.join(disk, "Users", getpass.getuser())):
+            folders[:] = [d for d in folders if not d[0] == '.']
+            if search_folder in folders:
+                for root_, _, files in os.walk(os.path.join(root, search_folder)):
+                    files = [f for f in files if not f[0] == '.']
+                    find_files = list(filter(lambda elem: filename in elem, files))
+                    if len(find_files) > 0:
+                        return [os.path.join(root_, elem) for elem in find_files]
+    elif platform.system() == "Linux":  # Linux
+        return
+    elif platform.system() == "Darwin":  # Mac
+        return
+
+
+def get_file_path() -> list:
+    speak("OK, all I need is you paste path to your file")
+    from_path = input("Path to your file:\n").replace('"', "")
+    if os.path.isfile(from_path):
+        speak("I found it. Paste a path where you want to copy your file")
+        to_path = input("Path to folder where file will be copied:\n").replace('"', "")
+        if os.path.isdir(to_path):
+            return [from_path, to_path]
+        else:
+            return ["File into file"]
+    else:
+        return ["Not a file"]
+
+
+def copy_file(source, destination) -> str:
+    try:
+        shutil.copy(source, destination)
+        return "OK"
+    except OSError as exc:
+        return f"Error: {exc}"
+
+
+def get_directory_path() -> list:
+    speak("OK, all I need is you paste path to your folder")
+    from_path = input("Path to your folder:\n").replace('"', "")
+    if os.path.isdir(from_path):
+        speak("I found it. Paste a path where you want to copy your folder")
+        to_path = input("Path to folder where folder will be copied:\n").replace('"', "")
+        if os.path.isdir(to_path):
+            return [from_path, to_path]
+        else:
+            return ["Folder into file"]
+    else:
+        return ["Not a folder"]
+
+
+def copy_directory(source, destination) -> str:
+    folder_name = source.split('\\')[-1]
+    destination = os.path.join(destination, folder_name)
+    try:
+        os.mkdir(destination)
+        distutils.dir_util.copy_tree(source, destination)
+    except OSError as exc:
+        return f"Cannot copy directory. Error occurred: {exc}"
+    else:
+        return f"Directory successfully copied to {destination.removesuffix(folder_name)}"

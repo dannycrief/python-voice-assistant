@@ -5,7 +5,7 @@ import datetime
 from VA_date import get_date
 from VA_config import speak, get_audio
 from VA_note import note
-from additional_functions.functions import copy_file, copy_directory
+from additional_functions.functions import copy_file, copy_directory, get_file_path, get_directory_path
 from googleAPI.googleCalendar.google_calendarAPI import authenticate_google_calendar
 from googleAPI.googleGmail.google_gmail_API import authenticate_google_gmail
 from googleAPI.googleMaps.google_maps_API import get_google_map_travel
@@ -181,32 +181,24 @@ def main():
             for phrase in COPY_STRS:
                 if phrase in text:
                     if "copy file" in phrase:
-                        speak("OK, all I need is you paste path to your file")
-                        from_path = input("Path to your file: ")
-                        if os.path.isfile(from_path):
-                            speak("I found it. Paste a path where you want to copy your file")
-                            to_path = input("Path to folder where file will be copied: ")
-                            if os.path.isdir(to_path):
-                                speak("On its way...")
-                                speak("Successfully copied") if copy_file(from_path, to_path) == "OK" else speak(
-                                    "Cannot copy file because of error")
-                            else:
-                                speak("Seriously? Do you want to copy file to file? Think about it")
-                        else:
+                        path = get_file_path()
+                        if len(path) > 1:
+                            speak("On its way...")
+                            speak("Successfully copied") if copy_file(path[0], path[1]) == "OK" else speak(
+                                "Cannot copy file because of error")
+                        elif path[0] == "File into file":
+                            speak("Seriously? Do you want to copy file to file? Think about it")
+                        elif path[0] == "Not a file":
                             speak("Selected item must be a file, but not folder")
                     elif "copy folder" in phrase:
-                        speak("OK, all I need is you paste path to your folder")
-                        from_path = input("Path to your folder")
-                        if os.path.isdir(from_path):
-                            speak("I found it. Paste a path where you want to copy your folder")
-                            to_path = input("Path to folder where folder will be copied: ")
-                            if os.path.isdir(to_path):
-                                speak("On it way...")
-                                speak("Successfully copied") if copy_directory(from_path, to_path) == "OK" else speak(
-                                    "Cannot copy file because of error")
-                            else:
-                                speak("Seriously? Do you want to copy folder to file? Think about it")
-                        else:
+                        path = get_directory_path()
+                        if len(path) > 1:
+                            speak("On it way...")
+                            speak("Successfully copied") if copy_directory(path[0], path[1]) == "OK" else speak(
+                                "Cannot copy file because of error")
+                        elif path[0] == "Folder into file":
+                            speak("Seriously? Do you want to copy folder to file? Think about it")
+                        elif path[0] == "Not a folder":
                             speak("Selected item must be a folder, but not file")
 
             if len(to_stop) > 0:
@@ -215,5 +207,5 @@ def main():
 
 
 if __name__ == '__main__':
-    print("Listening")
+    print("Mark's listening...")
     main()

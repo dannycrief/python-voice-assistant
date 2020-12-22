@@ -3,6 +3,7 @@ import os
 import platform
 import shutil
 import distutils.dir_util
+from VA_config import speak
 
 
 def text2int(textnum, numwords={}):
@@ -57,14 +58,8 @@ def get_numbers_from_string(phrase, text):
 
 
 def get_full_path(filename, search_folder, disk):
-    # dl = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
     disk = f"{disk}:/".upper()
-
     if platform.system() == "Windows":  # Windows
-        # drives = ["%s:" % d for d in dl if os.path.exists("%s:" % d)]
-        # if disk is not None and disk in drives:
-        #     path = os.path.join(disk)
-        #     return path
         for root, folders, _ in os.walk(os.path.join(disk, "Users", getpass.getuser())):
             folders[:] = [d for d in folders if not d[0] == '.']
             if search_folder in folders:
@@ -73,11 +68,24 @@ def get_full_path(filename, search_folder, disk):
                     find_files = list(filter(lambda elem: filename in elem, files))
                     if len(find_files) > 0:
                         return [os.path.join(root_, elem) for elem in find_files]
-
     elif platform.system() == "Linux":  # Linux
         return
     elif platform.system() == "Darwin":  # Mac
         return
+
+
+def get_file_path() -> list:
+    speak("OK, all I need is you paste path to your file")
+    from_path = input("Path to your file:\n")
+    if os.path.isfile(from_path):
+        speak("I found it. Paste a path where you want to copy your file")
+        to_path = input("Path to folder where file will be copied:\n")
+        if os.path.isdir(to_path):
+            return [from_path.replace('"', ""), to_path.replace('"', "")]
+        else:
+            return ["File into file"]
+    else:
+        return ["Not a file"]
 
 
 def copy_file(source, destination) -> str:
@@ -88,7 +96,21 @@ def copy_file(source, destination) -> str:
         return f"Error: {exc}"
 
 
-def copy_directory(source, destination):
+def get_directory_path() -> list:
+    speak("OK, all I need is you paste path to your folder")
+    from_path = input("Path to your folder:\n")
+    if os.path.isdir(from_path):
+        speak("I found it. Paste a path where you want to copy your folder")
+        to_path = input("Path to folder where folder will be copied:\n")
+        if os.path.isdir(to_path):
+            return [from_path.replace('"', ""), to_path.replace('"', "")]
+        else:
+            return ["Folder into file"]
+    else:
+        return ["Not a folder"]
+
+
+def copy_directory(source, destination) -> str:
     folder_name = source.split('\\')[-1]
     destination = os.path.join(destination, folder_name)
     try:

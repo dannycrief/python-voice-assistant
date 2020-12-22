@@ -17,6 +17,6 @@ def get_audio():
         try:
             said = r.recognize_google(audio)
             print(said)
-        except Exception as e:
-            print(f"Exception: {e}")
+        except Exception:
+            pass
     return said.lower()

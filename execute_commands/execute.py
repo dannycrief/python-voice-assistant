@@ -1,3 +1,5 @@
+import time
+
 from additional_functions.functions import get_numbers_from_string
 
 
@@ -29,6 +31,7 @@ def execute_math(phrase, text):
         return first_number * second_number
 
 
-def set_timer():
-    pass
+def start_timer(seconds):
+    for second in range(seconds, 0, -1):
+        time.sleep(1)
 

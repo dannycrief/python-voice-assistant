@@ -1,6 +1,7 @@
 import os
 import re
 import time
+import winreg
 import shutil
 import getpass
 import platform
@@ -206,3 +207,30 @@ def say_timer_over():
 def start_timer(seconds):
     for second in range(seconds, 0, -1):
         time.sleep(1)
+
+
+def get_installed_programs(hive, flag):
+    aReg = winreg.ConnectRegistry(None, hive)
+    aKey = winreg.OpenKey(aReg, r"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall",
+                          0, winreg.KEY_READ | flag)
+    count_subkey = winreg.QueryInfoKey(aKey)[0]
+    software_list = []
+
+    for i in range(count_subkey):
+        try:
+            software = {}
+            asubkey_name = winreg.EnumKey(aKey, i)
+            asubkey = winreg.OpenKey(aKey, asubkey_name)
+            software['name'] = winreg.QueryValueEx(asubkey, "DisplayName")[0]
+            try:
+                software['version'] = winreg.QueryValueEx(asubkey, "DisplayVersion")[0]
+            except EnvironmentError:
+                software['version'] = 'undefined'
+            try:
+                software['publisher'] = winreg.QueryValueEx(asubkey, "Publisher")[0]
+            except EnvironmentError:
+                software['publisher'] = 'undefined'
+            software_list.append(software)
+        except EnvironmentError:
+            continue
+    return software_list

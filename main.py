@@ -1,16 +1,17 @@
 import os
 import pytz
+import random
 import datetime
+import threading
 
+from VA_note import note
 from VA_date import get_date
 from VA_config import speak, get_audio
-from VA_note import note
-from additional_functions.functions import copy_file, copy_directory, get_file_path, get_directory_path
-from googleAPI.googleCalendar.google_calendarAPI import authenticate_google_calendar
-from googleAPI.googleGmail.google_gmail_API import authenticate_google_gmail
 from googleAPI.googleMaps.google_maps_API import get_google_map_travel
-from execute_commands.execute import start_browser
-from execute_commands.execute import execute_math
+from googleAPI.googleGmail.google_gmail_API import authenticate_google_gmail
+from googleAPI.googleCalendar.google_calendarAPI import authenticate_google_calendar
+from additional_functions.functions import (copy_file, start_browser, execute_math, copy_directory, get_file_path,
+                                            get_directory_path, set_timer)
 
 WAKE = "hello mark"
 STOP = ["bye", "see you", "goodbye"]
@@ -19,10 +20,12 @@ GMAIL_STRS = ["do i have new messages", "do i have messages"]
 NOTE_STRS = ["make a note", "write this down", "remember this"]
 GMAPS_STRS = ["how can i get", "create a road", "create road", "how long do i need to ride"]
 BROWSER_STRS = ["open browser"]
-MATH_STRS = ["add", "plus", "+", "subtract", "minus", "-", "divide", "divided by", "/", "multiply", "multiplied by",
-             "times", "*"]
+MATH_STRS = ["add", "plus", "+", "subtract", "minus", "-", "divide", "divided by",
+             "/", "multiply", "multiplied by", "times", "*"]
 COPY_STRS = ["copy file", "copy folder", "move file", "move folder"]
-
+TIME_NOW_STRS = ["current time", "time now", "what time is it"]
+TIMER_STRS = ["set timer"]
+END_STR = ["See you soon!", "Till next time", "Goodbye", "Bye", "See you"]
 CALENDAR_SERVICE = authenticate_google_calendar()
 GMAIL_SERVICE = authenticate_google_gmail()
 
@@ -174,10 +177,6 @@ def main():
                         print("it is: ", result)
                         speak(f"it is: {result}")
 
-            for phrase in STOP:
-                if phrase in text:
-                    to_stop.append(phrase)
-
             for phrase in COPY_STRS:
                 if phrase in text:
                     if "copy file" in phrase:
@@ -200,10 +199,21 @@ def main():
                             speak("Seriously? Do you want to copy folder to file? Think about it")
                         elif path[0] == "Not a folder":
                             speak("Selected item must be a folder, but not file")
+            for phrase in TIME_NOW_STRS:
+                if phrase in text:
+                    speak(f"Current time is {datetime.datetime.now().strftime('%H:%M')}")
 
-            if len(to_stop) > 0:
-                speak("See you soon!")
-                break
+            for phrase in TIMER_STRS:
+                if phrase in text:
+                    timer_thread = threading.Thread(target=set_timer, args=(text,))
+                    timer_thread.start()
+
+        for phrase in STOP:
+            if phrase in text:
+                to_stop.append(phrase)
+        if len(to_stop) > 0:
+            speak(random.choice(END_STR))
+            break
 
 
 if __name__ == '__main__':

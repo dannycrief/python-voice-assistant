@@ -1,9 +1,24 @@
-import getpass
 import os
-import platform
+import re
+import time
 import shutil
+import getpass
+import platform
 import distutils.dir_util
+from threading import Timer
+
 from VA_config import speak
+
+
+def start_browser(browser_name):
+    if browser_name.lower() in ["google chrome", "chrome", "google chrome browser"]:
+        return 'start chrome'
+    elif browser_name.lower() in ["edge", "microsoft browser", "microsoft edge browser"]:
+        return 'start MicrosoftEdge'
+    elif browser_name.lower() in ["opera", "opera browser"]:
+        return 'start opera'
+    else:
+        return "Cannot find this browser"
 
 
 def text2int(textnum, numwords={}):
@@ -55,6 +70,23 @@ def get_numbers_from_string(phrase, text):
             else:
                 text = text.replace(e, "")
     return first_number, second_number
+
+
+def execute_math(phrase, text):
+    numbers = get_numbers_from_string(phrase, text)
+    first_number = numbers[0]
+    second_number = numbers[1]
+    if phrase in ["add", "plus", "+"]:
+        return first_number + second_number
+    elif phrase in ["subtract", "minus", "-"]:
+        return first_number - second_number
+    elif phrase in ["divide", "divided by", "/"]:
+        try:
+            return first_number / second_number
+        except ZeroDivisionError as e:
+            return e
+    elif phrase in ["multiply", "multiplied by", "times", "*"]:
+        return first_number * second_number
 
 
 def get_full_path(filename, search_folder, disk):
@@ -120,3 +152,57 @@ def copy_directory(source, destination) -> str:
         return f"Cannot copy directory. Error occurred: {exc}"
     else:
         return f"Directory successfully copied to {destination.removesuffix(folder_name)}"
+
+
+def get_timer(text: str) -> tuple[int, int]:
+    first_number = 0
+    second_number = 0
+    text = text.lower()
+    for word in ["minutes", "minute"]:
+        if word in text:
+            text = text.split(word)
+            first_text = text[0]
+            while len(first_text) != 1:
+                try:
+                    try:
+                        first_number = int(re.search(r'\d+', first_text).group())
+                    except:
+                        first_number = text2int(first_text)
+                    text.pop(0)
+                    break
+                except Exception as e:
+                    e = e.__str__().replace("Illegal word: ", "")
+                    first_text = first_text.replace(e, "", 1)
+    if not isinstance(text, list):
+        text = [text]
+    if "second" in text[0] or "seconds" in text[0]:
+        second_text = text[0]
+        while len(second_text) != 1:
+            try:
+                try:
+                    second_number = int(re.search(r'\d+', second_text).group())
+                except:
+                    second_number = text2int(second_text)
+                break
+            except Exception as e:
+                e = e.__str__().replace("Illegal word: ", "")
+                second_text = second_text.replace(e, "", 1)
+
+    return first_number, second_number
+
+
+def set_timer(text):
+    speak("Setting a timer")
+    timer = get_timer(text)
+    seconds = timer[1] + timer[0] * 60
+    t = Timer(float(seconds), say_timer_over)
+    t.start()
+
+
+def say_timer_over():
+    speak("Timer is done!")
+
+
+def start_timer(seconds):
+    for second in range(seconds, 0, -1):
+        time.sleep(1)

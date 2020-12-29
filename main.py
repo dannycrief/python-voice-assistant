@@ -1,19 +1,17 @@
 import os
-import random
-
 import pytz
+import random
 import datetime
 import threading
 
+from VA_note import note
 from VA_date import get_date
 from VA_config import speak, get_audio
-from VA_note import note
-from additional_functions.functions import copy_file, copy_directory, get_file_path, get_directory_path, set_timer
-from googleAPI.googleCalendar.google_calendarAPI import authenticate_google_calendar
-from googleAPI.googleGmail.google_gmail_API import authenticate_google_gmail
 from googleAPI.googleMaps.google_maps_API import get_google_map_travel
-from execute_commands.execute import start_browser
-from execute_commands.execute import execute_math
+from googleAPI.googleGmail.google_gmail_API import authenticate_google_gmail
+from googleAPI.googleCalendar.google_calendarAPI import authenticate_google_calendar
+from additional_functions.functions import (copy_file, start_browser, execute_math, copy_directory, get_file_path,
+                                            get_directory_path, set_timer)
 
 WAKE = "hello mark"
 STOP = ["bye", "see you", "goodbye"]

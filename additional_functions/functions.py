@@ -1,14 +1,17 @@
 import os
 import re
 import time
-import winreg
+import ntpath
 import shutil
 import getpass
 import platform
 import distutils.dir_util
 from threading import Timer
 
-from VA_config import speak
+from additional_functions.VA_config import speak, get_speak_engine, get_audio
+from additional_functions.before_start import get_installed_apps_before_begin
+
+ENGINE = get_speak_engine()
 
 
 def start_browser(browser_name):
@@ -108,10 +111,10 @@ def get_full_path(filename, search_folder, disk):
 
 
 def get_file_path() -> list:
-    speak("OK, all I need is you paste path to your file")
+    speak(ENGINE, "OK, all I need is you paste path to your file")
     from_path = input("Path to your file:\n").replace('"', "")
     if os.path.isfile(from_path):
-        speak("I found it. Paste a path where you want to copy your file")
+        speak(ENGINE, "I found it. Paste a path where you want to copy your file")
         to_path = input("Path to folder where file will be copied:\n").replace('"', "")
         if os.path.isdir(to_path):
             return [from_path, to_path]
@@ -130,10 +133,10 @@ def copy_file(source, destination) -> str:
 
 
 def get_directory_path() -> list:
-    speak("OK, all I need is you paste path to your folder")
+    speak(ENGINE, "OK, all I need is you paste path to your folder")
     from_path = input("Path to your folder:\n").replace('"', "")
     if os.path.isdir(from_path):
-        speak("I found it. Paste a path where you want to copy your folder")
+        speak(ENGINE, "I found it. Paste a path where you want to copy your folder")
         to_path = input("Path to folder where folder will be copied:\n").replace('"', "")
         if os.path.isdir(to_path):
             return [from_path, to_path]
@@ -193,7 +196,7 @@ def get_timer(text: str) -> tuple[int, int]:
 
 
 def set_timer(text):
-    speak("Setting a timer")
+    speak(ENGINE, "Setting a timer")
     timer = get_timer(text)
     seconds = timer[1] + timer[0] * 60
     t = Timer(float(seconds), say_timer_over)
@@ -201,7 +204,7 @@ def set_timer(text):
 
 
 def say_timer_over():
-    speak("Timer is done!")
+    speak(ENGINE, "Timer is done!")
 
 
 def start_timer(seconds):
@@ -209,28 +212,32 @@ def start_timer(seconds):
         time.sleep(1)
 
 
-def get_installed_programs(hive, flag):
-    aReg = winreg.ConnectRegistry(None, hive)
-    aKey = winreg.OpenKey(aReg, r"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall",
-                          0, winreg.KEY_READ | flag)
-    count_subkey = winreg.QueryInfoKey(aKey)[0]
-    software_list = []
-
-    for i in range(count_subkey):
+def open_program(program_name: str):
+    programs = []
+    installed_apps = get_installed_apps_before_begin()
+    for app in installed_apps:
+        for file in app['files']:
+            if file.lower().__contains__(program_name):
+                programs.append(os.path.join(app['root'], file))
+    if len(programs) > 1:
+        program_number = None
+        speak(ENGINE,
+              "These are the programs I found. Please enter a number of program.")
+        for program in programs:
+            print(ntpath.basename(program))
         try:
-            software = {}
-            asubkey_name = winreg.EnumKey(aKey, i)
-            asubkey = winreg.OpenKey(aKey, asubkey_name)
-            software['name'] = winreg.QueryValueEx(asubkey, "DisplayName")[0]
-            try:
-                software['version'] = winreg.QueryValueEx(asubkey, "DisplayVersion")[0]
-            except EnvironmentError:
-                software['version'] = 'undefined'
-            try:
-                software['publisher'] = winreg.QueryValueEx(asubkey, "Publisher")[0]
-            except EnvironmentError:
-                software['publisher'] = 'undefined'
-            software_list.append(software)
-        except EnvironmentError:
-            continue
-    return software_list
+            program_number = int(input("")) - 1
+        except ValueError:
+            speak(ENGINE, "It is not a number.")
+        try:
+            os.startfile(programs[program_number])
+        except IndexError:
+            speak(ENGINE, "I think I found fewer programs.")
+        except TypeError:
+            pass
+
+    elif len(programs) == 0:
+        speak(ENGINE, "Sorry, I can't find this program.")
+    else:
+        speak(ENGINE, "Opening {}".format(ntpath.basename(programs[0])))
+        os.startfile(programs[0])

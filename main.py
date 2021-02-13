@@ -1,6 +1,7 @@
 import os
 import pytz
 import random
+import logging
 import datetime
 import threading
 
@@ -14,11 +15,15 @@ from googleAPI.googleCalendar.google_calendarAPI import authenticate_google_cale
 from additional_functions.functions import copy_file, start_browser, execute_math, copy_directory, get_file_path, \
     get_directory_path, set_timer, open_program
 
-ENGINE = get_speak_engine()
-CALENDAR_SERVICE = authenticate_google_calendar()
-GMAIL_SERVICE = authenticate_google_gmail()
+logging.basicConfig(filename='program.log',
+                    format='%(asctime)s - %(threadName)s - %(name)s - %(levelname)s - %(message)s',
+                    datefmt='%Y-%m-%d %H:%M:%S', level=logging.INFO)
 
-WAKE = "hello mark"
+ENGINE = get_speak_engine()
+GMAIL_SERVICE = authenticate_google_gmail()
+CALENDAR_SERVICE = authenticate_google_calendar()
+
+WAKE = "hello sara"
 STOP = ["bye", "see you", "goodbye"]
 CALENDAR_STRS = ["what do i have", "do i have plans", "do i have any plans", "am i busy"]
 GMAIL_STRS = ["do i have new messages", "do i have messages"]
@@ -214,5 +219,5 @@ def main():
 
 if __name__ == '__main__':
     get_info_before_begin()
-    print("Mark's listening...")
+    print("Sara's listening...")
     main()

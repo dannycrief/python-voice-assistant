@@ -1,9 +1,9 @@
-# Sara Voice Assistant
+# Sarah Voice Assistant
 ![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/dannycrief/python-voice-assistant)
 ![GitHub issues](https://img.shields.io/github/issues/dannycrief/python-voice-assistant)
 ![GitHub last commit](https://img.shields.io/github/last-commit/dannycrief/python-voice-assistant)
-- Sara Voice Assistant is a Python voice assistant project on SpeechRecognition, pyttsx3 and GoogleAPI
-- Sara knows to read data from your Google Calendar (from first running you'll be redirected to Google login page), read email from your Gmail, build road using Google Maps, open browse, and write data to file .txt using notepad.exe
+- Sarah Voice Assistant is a Python voice assistant project on SpeechRecognition, pyttsx3 and GoogleAPI
+- Sarah knows to read data from your Google Calendar (from first running you'll be redirected to Google login page), read email from your Gmail, build road using Google Maps, open browse, and write data to file .txt using notepad.exe
 
 ## Installation
 - Clone project
@@ -21,7 +21,7 @@ pip install virtualenv
 virtualenv virtualenv_name
 source virtualenv_name/bin/activate
 ```
-- To make Sara Voice Assistant work correctly you'll be need to PyAudio library
+- To make Sarah Voice Assistant work correctly you'll be need to PyAudio library
 - Check you python version
 ```bash
 python --version
@@ -71,8 +71,8 @@ python main.py
  4. "how can i get", "create a road", "create road", "how long do i need to ride"
  5. "open browser"
 ## Examples using
-- Hey Sara what do I have on Monday 2nd
-- Hey Sara make a note
+- Hey Sarah what do I have on Monday 2nd
+- Hey Sarah make a note
 ## Contributing
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
 

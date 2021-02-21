@@ -6,6 +6,7 @@ import datetime
 import threading
 
 from pathlib import Path
+from additional_functions.logger import get_logger
 from additional_functions.functions import note, get_date
 from additional_functions.before_start import get_info_before_begin
 from googleAPI.googleMaps.google_maps_API import get_google_map_travel
@@ -15,17 +16,15 @@ from googleAPI.googleCalendar.google_calendarAPI import authenticate_google_cale
 from additional_functions.functions import copy_file, start_browser, execute_math, copy_directory, get_file_path, \
     get_directory_path, set_timer, open_program
 
-logging.basicConfig(filename='logs/main.log', level=logging.INFO,
-                    format='%(asctime)s-%(levelname)s:%(name)s:%(message)s',
-                    datefmt='%y-%m-%d %H:%M:%S')
+logger = get_logger("main")
 
 logging.getLogger('googleapiclient.discovery_cache').setLevel(logging.CRITICAL)
 
-logging.info("Getting speak engine")
+logger.info("Getting speak engine")
 ENGINE = get_speak_engine()
-logging.info("Authenticating google gmail")
+logger.info("Authenticating google gmail")
 GMAIL_SERVICE = authenticate_google_gmail()
-logging.info("Authenticating google calendar")
+logger.info("Authenticating google calendar")
 CALENDAR_SERVICE = authenticate_google_calendar()
 
 WAKE = "hello sarah"
@@ -47,7 +46,7 @@ END_STR = ["See you soon!", "Till next time", "Goodbye", "Bye", "See you"]
 
 def get_events(date, service):
     # Call the Calendar API
-    logging.info("Getting events from Google Calendar")
+    logger.info("Getting events from Google Calendar")
     date = datetime.datetime.combine(date, datetime.datetime.min.time())
     end_date = datetime.datetime.combine(date, datetime.datetime.max.time())
     utc = pytz.UTC
@@ -60,10 +59,10 @@ def get_events(date, service):
     events = events_result.get('items', [])
 
     if not events:
-        logging.info("Sarah notice that there are no events found.")
+        logger.info("Sarah notice that there are no events found.")
         speak(ENGINE, 'No upcoming events found.')
     else:
-        logging.info(f"Sarah found {len(events)} events.")
+        logger.info(f"Sarah found {len(events)} events.")
         speak(ENGINE, f'You have {len(events)} events on this day')
 
         for event in events:
@@ -78,14 +77,14 @@ def get_events(date, service):
 
 
 def get_messages_from_gmail(service):
-    logging.info("Getting messages from Google Gmail")
+    logger.info("Getting messages from Google Gmail")
     results = service.users().messages().list(userId='me',
                                               labelIds=['INBOX'],
                                               q="is:unread").execute()
     messages = results.get('messages', [])
 
     if not messages:
-        logging.info("No messages found.")
+        logger.info("No messages found.")
         speak(ENGINE, 'No messages found.')
     else:
         gmails = []
@@ -95,15 +94,15 @@ def get_messages_from_gmail(service):
             messages_count += 1
             gmails.append(msg)
 
-        logging.info(f"User have {str(messages_count)} unread messages.")
+        logger.info(f"User have {str(messages_count)} unread messages.")
         speak(ENGINE, f"You have {str(messages_count)} unread messages.")
         speak(ENGINE, "Would you like to see your messages: ")
         message_choice = get_audio().lower()
-        logging.info(f"User wants to show unread messages.")
+        logger.info(f"User wants to show unread messages.")
         if "yes" in message_choice:
             speak(ENGINE, "How many messages you want to display:")
             number_of_emails = int(get_audio())
-            logging.info(f"User wants to show {number_of_emails} unread messages.")
+            logger.info(f"User wants to show {number_of_emails} unread messages.")
             if number_of_emails == number_of_emails:
                 for gmail in gmails[:number_of_emails]:
                     email_data = gmail["payload"]["headers"]
@@ -114,7 +113,7 @@ def get_messages_from_gmail(service):
                             speak(ENGINE, f"You have a new message from: {from_name}")
                             speak(ENGINE, f"{gmail['snippet'][:50]} etc.")
             else:
-                logging.warning(f"Sarah didn't understand.")
+                logger.warning(f"Sarah didn't understand.")
                 speak(ENGINE, "I didn't understand")
 
 
@@ -123,7 +122,7 @@ to_stop = []
 
 def main():
     while True:
-        logging.info(f"Sarah is running.")
+        logger.info(f"Sarah is running.")
         text = get_audio()
         if text.count(WAKE) > 0:
             speak(ENGINE, "Hello, what do you want me to do?")
@@ -131,7 +130,7 @@ def main():
 
             for phrase in CALENDAR_STRS:
                 if phrase in text:
-                    logging.info(f"Found {phrase}. in CALENDAR_STRS")
+                    logger.info(f"Found {phrase}. in CALENDAR_STRS")
                     date = get_date(text)
                     if date:
                         get_events(date, CALENDAR_SERVICE)
@@ -141,7 +140,7 @@ def main():
 
             for phrase in NOTE_STRS:
                 if phrase in text:
-                    logging.info(f"Found {phrase}. in NOTE_STRS")
+                    logger.info(f"Found {phrase}. in NOTE_STRS")
                     speak(ENGINE, "What would you like me to write down?")
                     note_text = get_audio()
                     note(note_text)
@@ -149,12 +148,12 @@ def main():
 
             for phrase in GMAIL_STRS:
                 if phrase in text:
-                    logging.info(f"Found {phrase}. in GMAIL_STRS")
+                    logger.info(f"Found {phrase}. in GMAIL_STRS")
                     get_messages_from_gmail(GMAIL_SERVICE)
 
             for phrase in GMAPS_STRS:
                 if phrase in text:
-                    logging.info(f"Found {phrase}. in GMAPS_STRS")
+                    logger.info(f"Found {phrase}. in GMAPS_STRS")
                     speak(ENGINE,
                           "Type your current address. Address first, city (optional) and postal code (optional)")
                     user_address_from = input("Type your current address (address, <city>, <postal code>): ")
@@ -174,7 +173,7 @@ def main():
 
             for phrase in BROWSER_STRS:
                 if phrase in text:
-                    logging.info(f"Found {phrase}. in BROWSER_STRS")
+                    logger.info(f"Found {phrase}. in BROWSER_STRS")
                     speak(ENGINE, "Which browser?")
                     browser_name = get_audio()
                     open_browser = start_browser(browser_name)
@@ -186,7 +185,7 @@ def main():
 
             for phrase in MATH_STRS:
                 if phrase in text:
-                    logging.info(f"Found {phrase}. in MATH_STRS")
+                    logger.info(f"Found {phrase}. in MATH_STRS")
                     result = execute_math(phrase, text)
                     if result == "division by zero":
                         speak(ENGINE, "Hmm, division by zero is impossible")
@@ -195,7 +194,7 @@ def main():
 
             for phrase in COPY_STRS:
                 if phrase in text:
-                    logging.info(f"Found {phrase}. in COPY_STRS")
+                    logger.info(f"Found {phrase}. in COPY_STRS")
                     if "copy file" in phrase:
                         path = get_file_path()
                         if len(path) > 1:
@@ -220,39 +219,39 @@ def main():
 
             for phrase in TIME_NOW_STRS:
                 if phrase in text:
-                    logging.info(f"Found {phrase}. in TIME_NOW_STRS")
+                    logger.info(f"Found {phrase}. in TIME_NOW_STRS")
                     speak(ENGINE, f"Current time is {datetime.datetime.now().strftime('%H:%M')}")
 
             for phrase in TIMER_STRS:
                 if phrase in text:
-                    logging.info(f"Found {phrase}. in TIMER_STRS")
+                    logger.info(f"Found {phrase}. in TIMER_STRS")
                     timer_thread = threading.Thread(target=set_timer, args=(text,))
                     timer_thread.start()
 
             for phrase in OPEN_PROGRAM_STRS:
                 if phrase in text:
-                    logging.info(f"Found {phrase}. in OPEN_PROGRAM_STRS")
+                    logger.info(f"Found {phrase}. in OPEN_PROGRAM_STRS")
                     print(phrase, text)
                     program_name = text.replace(phrase, '')
                     open_program(program_name)
 
         for phrase in STOP:
             if phrase in text:
-                logging.info(f"Found {phrase}. in STOP")
+                logger.info(f"Found {phrase}. in STOP")
                 to_stop.append(phrase)
         if len(to_stop) > 0:
-            logging.info("Sarah stops working")
+            logger.info("Sarah stops working")
             speak(ENGINE, random.choice(END_STR))
             break
 
 
 if __name__ == '__main__':
-    logging.info("Creating folder logs if it does not exists.")
+    logger.info("Creating folder logs if it does not exists.")
     Path("logs/").mkdir(parents=True, exist_ok=True)
-    logging.info("Creating folder notes if it does not exists.")
+    logger.info("Creating folder notes if it does not exists.")
     Path("notes/").mkdir(parents=True, exist_ok=True)
-    logging.info("Created logs folder. Getting user info before begin")
+    logger.info("Created logs folder. Getting user info before begin")
     get_info_before_begin()
-    logging.info("Collected user data. Sarah is listening..")
+    logger.info("Collected user data. Sarah is listening..")
     print("Sarah's listening...")
     main()

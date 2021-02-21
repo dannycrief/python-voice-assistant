@@ -1,4 +1,3 @@
-import logging
 import os
 import re
 import time
@@ -9,23 +8,22 @@ import subprocess
 import distutils.dir_util
 from threading import Timer
 
+from additional_functions.logger import get_logger
 from additional_functions.VA_config import speak, get_speak_engine
 from additional_functions.before_start import get_installed_apps_before_begin
+
+logger = get_logger("functions")
 
 MONTHS = ['january', 'february', 'march', 'april', 'may', 'june',
           'july', 'august', 'september', 'october', 'november', 'december']
 DAYS = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday']
 DAY_EXTENSIONS = ["nd", "rd", "th", "st"]
 
-logging.basicConfig(filename='logs/functions.log', level=logging.INFO,
-                    format='%(asctime)s-%(levelname)s:%(name)s:%(message)s',
-                    datefmt='%y-%m-%d %H:%M:%S')
-
 ENGINE = get_speak_engine()
 
 
 def note(text):
-    logging.info("Making note")
+    logger.info("Making note")
     date = datetime.datetime.now()
     file_name = str(date).replace(":", "-") + "-note.txt"
     with open(os.path.join("../notes", file_name), "w") as f:
@@ -34,7 +32,7 @@ def note(text):
 
 
 def get_date(text):
-    logging.info("Getting date")
+    logger.info("Getting date")
     text = text.lower()
     today = datetime.date.today()
 
@@ -95,23 +93,23 @@ def get_date(text):
 
 def start_browser(browser_name):
     if browser_name.lower() in ["google chrome", "chrome", "google chrome browser"]:
-        logging.info("Starting {}".format(browser_name))
+        logger.info("Starting {}".format(browser_name))
         return 'start chrome'
     elif browser_name.lower() in ["edge", "microsoft browser", "microsoft edge browser"]:
-        logging.info("Starting {}".format(browser_name))
+        logger.info("Starting {}".format(browser_name))
         return 'start MicrosoftEdge'
     elif browser_name.lower() in ["opera", "opera browser"]:
-        logging.info("Starting {}".format(browser_name))
+        logger.info("Starting {}".format(browser_name))
         return 'start opera'
     else:
-        logging.warning("Cannot find this browser")
+        logger.warning("Cannot find this browser")
         return "Cannot find this browser"
 
 
 def text2int(textnum, numwords=None):
     if numwords is None:
         numwords = {}
-    logging.info("Converting text to integer")
+    logger.info("Converting text to integer")
     if not numwords:
         units = [
             "zero", "one", "two", "three", "four", "five", "six", "seven", "eight",
@@ -141,12 +139,12 @@ def text2int(textnum, numwords=None):
         if scale > 100:
             result += current
             current = 0
-    logging.info("Text to integer. Input {}; Output {}".format(textnum, result + current))
+    logger.info("Text to integer. Input {}; Output {}".format(textnum, result + current))
     return result + current
 
 
 def get_numbers_from_string(phrase, text):
-    logging.info("Getting numbers from string.")
+    logger.info("Getting numbers from string.")
     first_number = None
     second_number = None
     while len(text) != 0:
@@ -164,7 +162,7 @@ def get_numbers_from_string(phrase, text):
 
 
 def execute_math(phrase, text):
-    logging.info("Executing math function {}".format(phrase))
+    logger.info("Executing math function {}".format(phrase))
     numbers = get_numbers_from_string(phrase, text)
     first_number = numbers[0]
     second_number = numbers[1]
@@ -176,7 +174,7 @@ def execute_math(phrase, text):
         try:
             return first_number / second_number
         except ZeroDivisionError as e:
-            logging.warning("Zero Division Error")
+            logger.warning("Zero Division Error")
             return e
     elif phrase in ["multiply", "multiplied by", "times", "*"]:
         return first_number * second_number
@@ -197,18 +195,18 @@ def get_file_path() -> list:
 
 
 def copy_file(source, destination) -> str:
-    logging.info("Coping file function started.")
+    logger.info("Coping file function started.")
     try:
         shutil.copy(source, destination)
-        logging.info("Coping file function ended successfully")
+        logger.info("Coping file function ended successfully")
         return "OK"
     except OSError as exc:
-        logging.error("Coping file function with error", exc)
+        logger.error("Coping file function with error", exc)
         return f"Error: {exc}"
 
 
 def get_directory_path() -> list:
-    logging.info("Getting directory path.")
+    logger.info("Getting directory path.")
     speak(ENGINE, "OK, all I need is you paste path to your folder")
     from_path = input("Path to your folder:\n").replace('"', "")
     if os.path.isdir(from_path):
@@ -217,30 +215,30 @@ def get_directory_path() -> list:
         if os.path.isdir(to_path):
             return [from_path, to_path]
         else:
-            logging.warning("Getting directory path function ended with warning. User tried to copy folder into file.")
+            logger.warning("Getting directory path function ended with warning. User tried to copy folder into file.")
             return ["Folder into file"]
     else:
-        logging.warning("Getting directory path function ended with warning: Not a folder.")
+        logger.warning("Getting directory path function ended with warning: Not a folder.")
         return ["Not a folder"]
 
 
 def copy_directory(source, destination) -> str:
-    logging.info("Copy directory function started.")
+    logger.info("Copy directory function started.")
     folder_name = source.split('\\')[-1]
     destination = os.path.join(destination, folder_name)
     try:
         os.mkdir(destination)
         distutils.dir_util.copy_tree(source, destination)
     except OSError as exc:
-        logging.warning(f"Cannot copy directory. Error occurred: {exc}")
+        logger.warning(f"Cannot copy directory. Error occurred: {exc}")
         return f"Cannot copy directory. Error occurred: {exc}"
     else:
-        logging.info(f"Directory successfully copied to {destination.removesuffix(folder_name)}")
+        logger.info(f"Directory successfully copied to {destination.removesuffix(folder_name)}")
         return f"Directory successfully copied to {destination.removesuffix(folder_name)}"
 
 
 def get_timer(text: str) -> tuple[int, int]:
-    logging.info("Getting time for setting timer.")
+    logger.info("Getting time for setting timer.")
     first_number = 0
     second_number = 0
     text = text.lower()
@@ -273,12 +271,12 @@ def get_timer(text: str) -> tuple[int, int]:
             except Exception as e:
                 e = e.__str__().replace("Illegal word: ", "")
                 second_text = second_text.replace(e, "", 1)
-    logging.info(f"Timer found: {first_number}:{second_number}.")
+    logger.info(f"Timer found: {first_number}:{second_number}.")
     return first_number, second_number
 
 
 def set_timer(text):
-    logging.info("Setting timer.")
+    logger.info("Setting timer.")
     speak(ENGINE, "Setting a timer")
     timer = get_timer(text)
     seconds = timer[1] + timer[0] * 60
@@ -287,18 +285,18 @@ def set_timer(text):
 
 
 def say_timer_over():
-    logging.info("Timer is done!")
+    logger.info("Timer is done!")
     speak(ENGINE, "Timer is done!")
 
 
 def start_timer(seconds):
-    logging.info("Starting timer.")
+    logger.info("Starting timer.")
     for second in range(seconds, 0, -1):
         time.sleep(1)
 
 
 def open_program(program_name: str):
-    logging.info("Opening program function started")
+    logger.info("Opening program function started")
     programs = []
     installed_apps = get_installed_apps_before_begin()
     for app in installed_apps:
@@ -314,21 +312,21 @@ def open_program(program_name: str):
         try:
             program_number = int(input("")) - 1
         except ValueError:
-            logging.error("Number of founded programs was expected. But user provides something else.")
+            logger.error("Number of founded programs was expected. But user provides something else.")
             speak(ENGINE, "It is not a number.")
         try:
             os.startfile(programs[program_number])
         except IndexError:
-            logging.error(f"Sarah found {len(programs)} programs, but user tried to open {program_number}")
+            logger.error(f"Sarah found {len(programs)} programs, but user tried to open {program_number}")
             speak(ENGINE, "I think I found fewer programs.")
         except TypeError as terror:
-            logging.error(f"Cannot open program. Error is: {terror}")
+            logger.error(f"Cannot open program. Error is: {terror}")
             pass
 
     elif len(programs) == 0:
-        logging.warning("Sarah cannot find any program")
+        logger.warning("Sarah cannot find any program")
         speak(ENGINE, "Sorry, I can't find this program.")
     else:
-        logging.info(f"Opening {ntpath.basename(programs[0])}")
+        logger.info(f"Opening {ntpath.basename(programs[0])}")
         speak(ENGINE, "Opening {}".format(ntpath.basename(programs[0])))
         os.startfile(programs[0])

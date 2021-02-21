@@ -4,7 +4,8 @@ import platform
 import speech_recognition as sr
 
 logging.basicConfig(filename='logs/configuration.log', level=logging.INFO,
-                    format='%(levelname)s:%(name)s:%(message)s')
+                    format='%(asctime)s-%(levelname)s:%(name)s:%(message)s',
+                    datefmt='%d-%b-%y %H:%M:%S')
 
 
 def get_speak_engine():

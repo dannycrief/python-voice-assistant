@@ -8,7 +8,8 @@ from random import choices
 from additional_functions.VA_config import speak, get_speak_engine
 
 logging.basicConfig(filename='logs/before_start.log', level=logging.INFO,
-                    format='%(levelname)s:%(name)s:%(message)s')
+                    format='%(asctime)s-%(levelname)s:%(name)s:%(message)s',
+                    datefmt='%d-%b-%y %H:%M:%S')
 
 ENGINE = get_speak_engine()
 

@@ -3,6 +3,9 @@ import logging
 import platform
 import speech_recognition as sr
 
+logging.basicConfig(filename='logs/configuration.log', level=logging.INFO,
+                    format='%(levelname)s:%(name)s:%(message)s')
+
 
 def get_speak_engine():
     engine = None

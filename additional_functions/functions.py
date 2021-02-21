@@ -19,12 +19,13 @@ DAY_EXTENSIONS = ["nd", "rd", "th", "st"]
 
 logging.basicConfig(filename='logs/functions.log', level=logging.INFO,
                     format='%(asctime)s-%(levelname)s:%(name)s:%(message)s',
-                    datefmt='%d-%b-%y %H:%M:%S')
+                    datefmt='%y-%m-%d %H:%M:%S')
 
 ENGINE = get_speak_engine()
 
 
 def note(text):
+    logging.info("Making note")
     date = datetime.datetime.now()
     file_name = str(date).replace(":", "-") + "-note.txt"
     with open(os.path.join("../notes", file_name), "w") as f:
@@ -33,6 +34,7 @@ def note(text):
 
 
 def get_date(text):
+    logging.info("Getting date")
     text = text.lower()
     today = datetime.date.today()
 

@@ -9,7 +9,7 @@ from additional_functions.VA_config import speak, get_speak_engine
 
 logging.basicConfig(filename='logs/before_start.log', level=logging.INFO,
                     format='%(asctime)s-%(levelname)s:%(name)s:%(message)s',
-                    datefmt='%d-%b-%y %H:%M:%S')
+                    datefmt='%y-%m-%d %H:%M:%S')
 
 ENGINE = get_speak_engine()
 

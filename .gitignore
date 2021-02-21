@@ -1,4 +1,4 @@
-*token.pickle
+*.pickle
 *credentials.json
 *.whl
 notes/

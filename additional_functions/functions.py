@@ -7,7 +7,7 @@ import shutil
 import distutils.dir_util
 from threading import Timer
 
-from additional_functions.VA_config import speak, get_speak_engine, get_audio
+from additional_functions.VA_config import speak, get_speak_engine
 from additional_functions.before_start import get_installed_apps_before_begin
 
 logging.basicConfig(filename='logs/functions.log', level=logging.INFO,

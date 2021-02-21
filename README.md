@@ -63,7 +63,7 @@ While you activate your virtual environments, you'll need to run it by typing in
 ```bash
 python main.py
 ```
-- Use "hey Sara" to wake Sara.
+- Use "hey Sarah" to wake Sarah.
 -Key phrases:
  1. "what do i have...", "do i have plans...", "am i busy.."
  2. "make a note", "write this down", "remember this"

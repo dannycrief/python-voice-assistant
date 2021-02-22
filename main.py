@@ -30,7 +30,8 @@ CALENDAR_SERVICE = authenticate_google_calendar()
 WAKE = "hi sara"
 STOP = ["bye", "see you", "goodbye"]
 CALENDAR_STRS = ["what do i have", "do i have plans", "do i have any plans", "am i busy"]
-GMAIL_STRS = ["do I have new messages", "do I have messages", "do I have any new messages"]
+GMAIL_STRS = ["do I have new messages", "do I have messages", "do I have any messages", "do i have new messages",
+              "do i have messages", "do i have any messages"]
 NOTE_STRS = ["make a note", "write this down", "remember this"]
 GMAPS_STRS = ["how can i get", "create a road", "create road", "how long do i need to ride"]
 BROWSER_STRS = ["open browser"]
@@ -115,6 +116,10 @@ def get_messages_from_gmail(service):
             else:
                 logger.warning(f"Sarah didn't understand.")
                 speak(ENGINE, "I didn't understand")
+        elif "no" in message_choice:
+            speak(ENGINE, "Ok")
+        else:
+            speak(ENGINE, "It's so hard to understand what you said")
 
 
 to_stop = []

@@ -26,9 +26,12 @@ def note(text):
     logger.info("Making note")
     date = datetime.datetime.now()
     file_name = str(date).replace(":", "-") + "-note.txt"
-    with open(os.path.join("../notes", file_name), "w") as f:
-        f.write(text)
-    subprocess.Popen(["notepad.exe", os.path.join("../notes", file_name)])
+    try:
+        with open(os.path.join("notes/", file_name), "a") as f:
+            f.write(text)
+        subprocess.Popen(["notepad.exe", os.path.join("notes/", file_name)])
+    except FileNotFoundError as error:
+        logger.error("Error with making a note. See error:", error)
 
 
 def get_date(text):

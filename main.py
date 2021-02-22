@@ -27,7 +27,7 @@ GMAIL_SERVICE = authenticate_google_gmail()
 logger.info("Authenticating google calendar")
 CALENDAR_SERVICE = authenticate_google_calendar()
 
-WAKE = "hello sarah"
+WAKE = "hi sara"
 STOP = ["bye", "see you", "goodbye"]
 CALENDAR_STRS = ["what do i have", "do i have plans", "do i have any plans", "am i busy"]
 GMAIL_STRS = ["do I have new messages", "do I have messages", "do I have any new messages"]

@@ -14,7 +14,7 @@ pip install virtualenv
 virtualenv myvenv_name
 myvenv_name\Scripts\activate
 ```
-- Linux: at this moment does not suppor OS Linux
+- Linux: at this moment does not support on OS Linux
 
 - To make Sarah Voice Assistant work correctly you'll be need to PyAudio library
 - Check you python version

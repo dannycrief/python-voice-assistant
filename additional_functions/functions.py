@@ -1,11 +1,13 @@
 import os
 import re
+
 import pytz
 import time
 import ntpath
 import shutil
 import datetime
 import subprocess
+from pathlib import Path
 import distutils.dir_util
 from threading import Timer
 
@@ -40,6 +42,7 @@ def get_events(date, service):
 
 
 def note(text):
+    Path("notes/").mkdir(parents=True, exist_ok=True)
     logger.info("Making note")
     date = datetime.datetime.now()
     file_name = str(date).replace(":", "-") + "-note.txt"

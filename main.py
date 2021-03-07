@@ -18,11 +18,6 @@ Path("logs/").mkdir(parents=True, exist_ok=True)
 
 logger = get_logger("main")
 
-logger.info("Creating folder logs if it does not exists.")
-logger.info("Creating folder notes if it does not exists.")
-Path("notes/").mkdir(parents=True, exist_ok=True)
-logger.info("Created logs folder. Getting user info before begin")
-
 logging.getLogger('googleapiclient.discovery_cache').setLevel(logging.CRITICAL)
 
 logger.info("Getting speak engine")

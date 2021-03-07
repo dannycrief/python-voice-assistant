@@ -1,5 +1,6 @@
 import os
 import re
+import pytz
 import time
 import ntpath
 import shutil
@@ -20,6 +21,22 @@ DAYS = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sun
 DAY_EXTENSIONS = ["nd", "rd", "th", "st"]
 
 ENGINE = get_speak_engine()
+
+
+def get_events(date, service):
+    # Call the Calendar API
+    logger.info("Getting events from Google Calendar")
+    date = datetime.datetime.combine(date, datetime.datetime.min.time())
+    end_date = datetime.datetime.combine(date, datetime.datetime.max.time())
+    utc = pytz.UTC
+    date = date.astimezone(utc)
+    end_date = end_date.astimezone(utc)
+
+    events_result = service.events().list(calendarId='primary', timeMin=date.isoformat(),
+                                          timeMax=end_date.isoformat(), singleEvents=True,
+                                          orderBy='startTime').execute()
+    events = events_result.get('items', [])
+    return events
 
 
 def note(text):

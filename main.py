@@ -1,5 +1,4 @@
 import os
-import pytz
 import random
 import logging
 import datetime
@@ -7,7 +6,7 @@ import threading
 
 from pathlib import Path
 from additional_functions.logger import get_logger
-from additional_functions.functions import note, get_date
+from additional_functions.functions import note, get_date, get_events
 from additional_functions.before_start import get_info_before_begin
 from googleAPI.googleGmail.google_gmail_API import authenticate_google_gmail
 from additional_functions.VA_config import speak, get_audio, get_speak_engine
@@ -15,7 +14,14 @@ from googleAPI.googleCalendar.google_calendarAPI import authenticate_google_cale
 from additional_functions.functions import copy_file, start_browser, execute_math, copy_directory, get_file_path, \
     get_directory_path, set_timer, open_program
 
+Path("logs/").mkdir(parents=True, exist_ok=True)
+
 logger = get_logger("main")
+
+logger.info("Creating folder logs if it does not exists.")
+logger.info("Creating folder notes if it does not exists.")
+Path("notes/").mkdir(parents=True, exist_ok=True)
+logger.info("Created logs folder. Getting user info before begin")
 
 logging.getLogger('googleapiclient.discovery_cache').setLevel(logging.CRITICAL)
 
@@ -41,38 +47,6 @@ COPY_STRS = ["copy file", "copy folder", "move file", "move folder"]
 TIME_NOW_STRS = ["current time", "time now", "what time is it"]
 TIMER_STRS = ["set timer"]
 END_STR = ["See you soon!", "Till next time", "Goodbye", "Bye", "See you"]
-
-
-def get_events(date, service):
-    # Call the Calendar API
-    logger.info("Getting events from Google Calendar")
-    date = datetime.datetime.combine(date, datetime.datetime.min.time())
-    end_date = datetime.datetime.combine(date, datetime.datetime.max.time())
-    utc = pytz.UTC
-    date = date.astimezone(utc)
-    end_date = end_date.astimezone(utc)
-
-    events_result = service.events().list(calendarId='primary', timeMin=date.isoformat(),
-                                          timeMax=end_date.isoformat(), singleEvents=True,
-                                          orderBy='startTime').execute()
-    events = events_result.get('items', [])
-
-    if not events:
-        logger.info("Sarah notice that there are no events found.")
-        speak(ENGINE, 'No upcoming events found.')
-    else:
-        logger.info(f"Sarah found {len(events)} events.")
-        speak(ENGINE, f'You have {len(events)} events on this day')
-
-        for event in events:
-            start = event['start'].get('dateTime', event['start'].get('date'))
-            start_time = str(start.split("T")[1].split("+")[0])
-            if int(start_time.split(":")[0]) < 12:
-                start_time = start_time + "AM"
-            else:
-                start_time = str(int(start_time.split(":")[0]) - 12) + start_time.split(":")[1]
-                start_time = start_time + "PM"
-            speak(ENGINE, event["summary"] + " at " + start_time)
 
 
 def get_messages_from_gmail(service):
@@ -136,8 +110,23 @@ def main():
                     logger.info(f"Found {phrase}. in CALENDAR_STRS")
                     date = get_date(text)
                     if date:
-                        get_events(date, CALENDAR_SERVICE)
-                        pass
+                        events = get_events(date, CALENDAR_SERVICE)
+                        if not events:
+                            logger.info("Sarah notice that there are no events found.")
+                            speak(ENGINE, 'No upcoming events found.')
+                        else:
+                            logger.info(f"Sarah found {len(events)} events.")
+                            speak(ENGINE, f'You have {len(events)} events on this day')
+
+                            for event in events:
+                                start = event['start'].get('dateTime', event['start'].get('date'))
+                                start_time = str(start.split("T")[1].split("+")[0])
+                                if int(start_time.split(":")[0]) < 12:
+                                    start_time = start_time + "AM"
+                                else:
+                                    start_time = str(int(start_time.split(":")[0]) - 12) + start_time.split(":")[1]
+                                    start_time = start_time + "PM"
+                                speak(ENGINE, event["summary"] + " at " + start_time)
                     else:
                         speak(ENGINE, "I don't understand")
 
@@ -229,11 +218,6 @@ def main():
 
 
 if __name__ == '__main__':
-    logger.info("Creating folder logs if it does not exists.")
-    Path("logs/").mkdir(parents=True, exist_ok=True)
-    logger.info("Creating folder notes if it does not exists.")
-    Path("notes/").mkdir(parents=True, exist_ok=True)
-    logger.info("Created logs folder. Getting user info before begin")
     get_info_before_begin()
     logger.info("Collected user data. Sarah is listening..")
     print("Sarah's listening...")

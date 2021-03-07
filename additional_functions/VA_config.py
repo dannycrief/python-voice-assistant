@@ -47,9 +47,9 @@ def get_audio():
         audio = r.listen(source)
         said = ""
         try:
+            logger.info("Recognizing audio with google recognizer")
             said = r.recognize_google(audio)
             print(said)
-            logger.info("Microphone configuring ended with success")
-        except Exception as microphoneError:
-            logger.error("Microphone configuring ended with error: ", microphoneError)
+        except Exception:
+            logger.warning("Recognizing audio failed")
     return said.lower()

@@ -9,7 +9,6 @@ from pathlib import Path
 from additional_functions.logger import get_logger
 from additional_functions.functions import note, get_date
 from additional_functions.before_start import get_info_before_begin
-from googleAPI.googleMaps.google_maps_API import get_google_map_travel
 from googleAPI.googleGmail.google_gmail_API import authenticate_google_gmail
 from additional_functions.VA_config import speak, get_audio, get_speak_engine
 from googleAPI.googleCalendar.google_calendarAPI import authenticate_google_calendar
@@ -33,7 +32,6 @@ CALENDAR_STRS = ["what do i have", "do i have plans", "do i have any plans", "am
 GMAIL_STRS = ["do I have new messages", "do I have messages", "do I have any messages", "do i have new messages",
               "do i have messages", "do i have any messages"]
 NOTE_STRS = ["make a note", "write this down", "remember this"]
-GMAPS_STRS = ["how can i get", "create a road", "create road", "how long do i need to ride"]
 BROWSER_STRS = ["open browser"]
 OPEN_PROGRAM_STRS = ['run', 'run program', 'open', 'open program', 'start', 'start program', 'launch',
                      'launch program']
@@ -155,26 +153,6 @@ def main():
                 if phrase in text:
                     logger.info(f"Found {phrase}. in GMAIL_STRS")
                     get_messages_from_gmail(GMAIL_SERVICE)
-
-            for phrase in GMAPS_STRS:
-                if phrase in text:
-                    logger.info(f"Found {phrase}. in GMAPS_STRS")
-                    speak(ENGINE,
-                          "Type your current address. Address first, city (optional) and postal code (optional)")
-                    user_address_from = input("Type your current address (address, <city>, <postal code>): ")
-                    speak(ENGINE, "Where you want to go (address, city)")
-                    user_address_to = input("Where you want to go (address, city): ")
-                    road_data = get_google_map_travel(user_address_from, user_address_to)
-                    if road_data:
-                        travel_duration = road_data[0]
-                        travel_options = road_data[1]
-                        speak(ENGINE,
-                              f"Your travel will take a {travel_duration}. Do you want me to tell you travel options?")
-                        if get_audio() == "yes" or input("Do you want me to tell you travel options? "):
-                            for option in travel_options:
-                                speak(ENGINE, option)
-                        else:
-                            speak(ENGINE, "Ok")
 
             for phrase in BROWSER_STRS:
                 if phrase in text:

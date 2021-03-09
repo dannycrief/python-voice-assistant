@@ -7,7 +7,6 @@ from google.auth.transport.requests import Request
 
 SCOPES = ['https://www.googleapis.com/auth/calendar.readonly']
 
-formatted=0
 
 def authenticate_google_calendar():
     credentials = None

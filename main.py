@@ -20,12 +20,12 @@ logger = get_logger("main")
 
 logging.getLogger('googleapiclient.discovery_cache').setLevel(logging.CRITICAL)
 
-logger.info("Getting speak engine")
-ENGINE = get_speak_engine()
-logger.info("Authenticating google gmail")
-GMAIL_SERVICE = authenticate_google_gmail()
 logger.info("Authenticating google calendar")
 CALENDAR_SERVICE = authenticate_google_calendar()
+logger.info("Authenticating google gmail")
+GMAIL_SERVICE = authenticate_google_gmail()
+logger.info("Getting speak engine")
+ENGINE = get_speak_engine()
 
 WAKE = "hi sara"
 STOP = ["bye", "see you", "goodbye"]

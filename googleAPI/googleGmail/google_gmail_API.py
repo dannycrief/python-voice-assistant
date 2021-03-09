@@ -9,19 +9,19 @@ SCOPES = ['https://www.googleapis.com/auth/gmail.readonly']
 
 
 def authenticate_google_gmail():
-    creds = None
+    credentials = None
 
     if os.path.exists('googleAPI/googleGmail/token.pickle'):
         with open('googleAPI/googleGmail/token.pickle', 'rb') as token:
-            creds = pickle.load(token)
-    if not creds or not creds.valid:
-        if creds and creds.expired and creds.refresh_token:
-            creds.refresh(Request())
+            credentials = pickle.load(token)
+    if not credentials or not credentials.valid:
+        if credentials and credentials.expired and credentials.refresh_token:
+            credentials.refresh(Request())
         else:
             flow = InstalledAppFlow.from_client_secrets_file('googleAPI/googleGmail/credentials.json', SCOPES)
-            creds = flow.run_local_server(port=0)
+            credentials = flow.run_local_server(port=0)
         with open('googleAPI/googleGmail/token.pickle', 'wb') as token:
-            pickle.dump(creds, token)
+            pickle.dump(credentials, token)
 
-    service = build('gmail', 'v1', credentials=creds)
+    service = build('gmail', 'v1', credentials=credentials)
     return service

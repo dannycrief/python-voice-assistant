@@ -5,6 +5,7 @@ notes/
 notes
 *-note.txt
 *api.txt
+secret_token.json
 chromedriver.exe
 road.json
 my-key.json

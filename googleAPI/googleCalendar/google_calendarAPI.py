@@ -70,8 +70,3 @@ def create_google_calendar_event(google_calendar_service):
             }
         }
     ).execute()
-
-
-if __name__ == '__main__':
-    service = authenticate_google_calendar()
-    print(create_google_calendar_event(service)["status"] == "confirmed")

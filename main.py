@@ -8,9 +8,9 @@ from pathlib import Path
 from additional_functions.logger import get_logger
 from additional_functions.functions import note, get_date, get_events
 from additional_functions.before_start import get_info_before_begin
-from googleAPI.googleGmail.google_gmail_API import authenticate_google_gmail
 from additional_functions.VA_config import speak, get_audio, get_speak_engine
 from googleAPI.googleCalendar.google_calendarAPI import authenticate_google_calendar
+from googleAPI.googleGmail.google_gmail_API import authenticate_google_gmail, get_unread_gmail_messages
 from additional_functions.functions import copy_file, start_browser, execute_math, copy_directory, get_file_path, \
     get_directory_path, set_timer, open_program
 
@@ -30,8 +30,8 @@ ENGINE = get_speak_engine()
 WAKE = "hi sara"
 STOP = ["bye", "see you", "goodbye"]
 CALENDAR_STRS = ["what do i have", "do i have plans", "do i have any plans", "am i busy"]
-GMAIL_STRS = ["do I have new messages", "do I have messages", "do I have any messages", "do i have new messages",
-              "do i have messages", "do i have any messages"]
+GMAIL_STRS = ["do I have new messages", "do I have messages", "do I have any messages", "do I have any new messages",
+              "do i have new messages", "do i have messages", "do i have any messages"]
 NOTE_STRS = ["make a note", "write this down", "remember this"]
 BROWSER_STRS = ["open browser"]
 OPEN_PROGRAM_STRS = ['run', 'run program', 'open', 'open program', 'start', 'start program', 'launch',
@@ -43,62 +43,16 @@ TIME_NOW_STRS = ["current time", "time now", "what time is it"]
 TIMER_STRS = ["set timer"]
 END_STR = ["See you soon!", "Till next time", "Goodbye", "Bye", "See you"]
 
-
-def get_messages_from_gmail(service):
-    logger.info("Getting messages from Google Gmail")
-    results = service.users().messages().list(userId='me',
-                                              labelIds=['INBOX'],
-                                              q="is:unread").execute()
-    messages = results.get('messages', [])
-
-    if not messages:
-        logger.info("No messages found.")
-        speak(ENGINE, 'No messages found.')
-    else:
-        gmails = []
-        messages_count = 0
-        for message in messages:
-            msg = service.users().messages().get(userId='me', id=message['id']).execute()
-            messages_count += 1
-            gmails.append(msg)
-
-        logger.info(f"User have {str(messages_count)} unread messages.")
-        speak(ENGINE, f"You have {str(messages_count)} unread messages.")
-        speak(ENGINE, "Would you like to see your messages: ")
-        message_choice = get_audio().lower()
-        logger.info(f"User wants to show unread messages.")
-        if "yes" in message_choice:
-            speak(ENGINE, "How many messages you want to display:")
-            number_of_emails = int(get_audio())
-            logger.info(f"User wants to show {number_of_emails} unread messages.")
-            if number_of_emails == number_of_emails:
-                for gmail in gmails[:number_of_emails]:
-                    email_data = gmail["payload"]["headers"]
-                    for values in email_data:
-                        name = values["name"]
-                        if name == "From":
-                            from_name = values["value"]
-                            speak(ENGINE, f"You have a new message from: {from_name}")
-                            speak(ENGINE, f"{gmail['snippet'][:50]} etc.")
-            else:
-                logger.warning(f"Sarah didn't understand.")
-                speak(ENGINE, "I didn't understand")
-        elif "no" in message_choice:
-            speak(ENGINE, "Ok")
-        else:
-            speak(ENGINE, "It's so hard to understand what you said")
-
-
 to_stop = []
 
 
 def main():
     while True:
         logger.info(f"Sarah is running.")
-        text = get_audio()
+        text = get_audio().lower()
         if text.count(WAKE) > 0:
             speak(ENGINE, "Hello, what do you want me to do?")
-            text = get_audio()
+            text = get_audio().lower()
 
             for phrase in CALENDAR_STRS:
                 if phrase in text:
@@ -129,20 +83,20 @@ def main():
                 if phrase in text:
                     logger.info(f"Found {phrase}. in NOTE_STRS")
                     speak(ENGINE, "What would you like me to write down?")
-                    note_text = get_audio()
+                    note_text = get_audio().lower()
                     note(note_text)
                     speak(ENGINE, "I've made a note of that.")
 
             for phrase in GMAIL_STRS:
                 if phrase in text:
                     logger.info(f"Found {phrase}. in GMAIL_STRS")
-                    get_messages_from_gmail(GMAIL_SERVICE)
+                    get_unread_gmail_messages(GMAIL_SERVICE)
 
             for phrase in BROWSER_STRS:
                 if phrase in text:
                     logger.info(f"Found {phrase}. in BROWSER_STRS")
                     speak(ENGINE, "Which browser?")
-                    browser_name = get_audio()
+                    browser_name = get_audio().lower()
                     open_browser = start_browser(browser_name)
                     if open_browser == "Cannot find this browser":
                         speak(ENGINE, open_browser)

@@ -6,10 +6,11 @@ import threading
 
 from pathlib import Path
 from additional_functions.logger import get_logger
-from additional_functions.functions import note, get_date, get_events
+from additional_functions.functions import note, get_date
 from additional_functions.before_start import get_info_before_begin
 from additional_functions.VA_config import speak, get_audio, get_speak_engine
-from googleAPI.googleCalendar.google_calendarAPI import authenticate_google_calendar
+from googleAPI.googleCalendar.google_calendarAPI import authenticate_google_calendar, get_google_calendar_events, \
+    create_google_calendar_event
 from googleAPI.googleGmail.google_gmail_API import authenticate_google_gmail, get_unread_gmail_messages, \
     send_email_message
 from additional_functions.functions import copy_file, start_browser, execute_math, copy_directory, get_file_path, \
@@ -31,6 +32,7 @@ ENGINE = get_speak_engine()
 WAKE = "hi sara"
 STOP = ["bye", "see you", "goodbye"]
 CALENDAR_STRS = ["what do i have", "do i have plans", "do i have any plans", "am i busy"]
+EVENT_CALENDAR_STRS = ["create event", "create new event", "add event", "add new event"]
 GMAIL_STRS = ["do I have new messages", "do I have messages", "do I have any messages", "do I have any new messages",
               "do i have new messages", "do i have messages", "do i have any messages"]
 SEND_GMAIL_STRS = ["send message", "send email"]
@@ -56,12 +58,16 @@ def main():
             speak(ENGINE, "Hello, what do you want me to do?")
             text = get_audio().lower()
 
+            for phrase in EVENT_CALENDAR_STRS:
+                if phrase in text:
+                    create_google_calendar_event(CALENDAR_SERVICE)
+
             for phrase in CALENDAR_STRS:
                 if phrase in text:
                     logger.info("Found %s in CALENDAR_STRS" % phrase)
                     date = get_date(text)
                     if date:
-                        events = get_events(date, CALENDAR_SERVICE)
+                        events = get_google_calendar_events(date, CALENDAR_SERVICE)
                         if not events:
                             logger.info("Sarah notice that there are no events found.")
                             speak(ENGINE, 'No upcoming events found.')

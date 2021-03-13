@@ -10,7 +10,8 @@ from additional_functions.functions import note, get_date, get_events
 from additional_functions.before_start import get_info_before_begin
 from additional_functions.VA_config import speak, get_audio, get_speak_engine
 from googleAPI.googleCalendar.google_calendarAPI import authenticate_google_calendar
-from googleAPI.googleGmail.google_gmail_API import authenticate_google_gmail, get_unread_gmail_messages
+from googleAPI.googleGmail.google_gmail_API import authenticate_google_gmail, get_unread_gmail_messages, \
+    send_email_message
 from additional_functions.functions import copy_file, start_browser, execute_math, copy_directory, get_file_path, \
     get_directory_path, set_timer, open_program
 
@@ -32,6 +33,7 @@ STOP = ["bye", "see you", "goodbye"]
 CALENDAR_STRS = ["what do i have", "do i have plans", "do i have any plans", "am i busy"]
 GMAIL_STRS = ["do I have new messages", "do I have messages", "do I have any messages", "do I have any new messages",
               "do i have new messages", "do i have messages", "do i have any messages"]
+SEND_GMAIL_STRS = ["send message", "send email"]
 NOTE_STRS = ["make a note", "write this down", "remember this"]
 BROWSER_STRS = ["open browser"]
 OPEN_PROGRAM_STRS = ['run', 'run program', 'open', 'open program', 'start', 'start program', 'launch',
@@ -91,6 +93,11 @@ def main():
                 if phrase in text:
                     logger.info(f"Found {phrase}. in GMAIL_STRS")
                     get_unread_gmail_messages(GMAIL_SERVICE)
+
+            for phrase in SEND_GMAIL_STRS:
+                if phrase in text:
+                    logger.info(f"Found {phrase}. in SEND_GMAIL_STRS")
+                    send_email_message(GMAIL_SERVICE)
 
             for phrase in BROWSER_STRS:
                 if phrase in text:

@@ -82,7 +82,3 @@ def delete_message(service, messages):
     else:
         pass
         speak(ENGINE, "Okay, I won't delete these messages.")
-
-if __name__ == '__main__':
-    service = authenticate_google_gmail()
-    get_unread_gmail_messages(service)

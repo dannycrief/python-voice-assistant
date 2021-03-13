@@ -50,7 +50,7 @@ to_stop = []
 
 def main():
     while True:
-        logger.info(f"Sarah is running.")
+        logger.info("Sarah is running.")
         text = get_audio().lower()
         if text.count(WAKE) > 0:
             speak(ENGINE, "Hello, what do you want me to do?")
@@ -58,7 +58,7 @@ def main():
 
             for phrase in CALENDAR_STRS:
                 if phrase in text:
-                    logger.info(f"Found {phrase}. in CALENDAR_STRS")
+                    logger.info("Found %s in CALENDAR_STRS" % phrase)
                     date = get_date(text)
                     if date:
                         events = get_events(date, CALENDAR_SERVICE)
@@ -66,8 +66,8 @@ def main():
                             logger.info("Sarah notice that there are no events found.")
                             speak(ENGINE, 'No upcoming events found.')
                         else:
-                            logger.info(f"Sarah found {len(events)} events.")
-                            speak(ENGINE, f'You have {len(events)} events on this day')
+                            logger.info("Sarah found %s events." % len(events))
+                            speak(ENGINE, 'You have %s events on this day' % len(events))
 
                             for event in events:
                                 start = event['start'].get('dateTime', event['start'].get('date'))
@@ -83,7 +83,7 @@ def main():
 
             for phrase in NOTE_STRS:
                 if phrase in text:
-                    logger.info(f"Found {phrase}. in NOTE_STRS")
+                    logger.info("Found %s. in NOTE_STRS" % phrase)
                     speak(ENGINE, "What would you like me to write down?")
                     note_text = get_audio().lower()
                     note(note_text)
@@ -91,17 +91,17 @@ def main():
 
             for phrase in GMAIL_STRS:
                 if phrase in text:
-                    logger.info(f"Found {phrase}. in GMAIL_STRS")
+                    logger.info("Found %s in GMAIL_STRS" % phrase)
                     get_unread_gmail_messages(GMAIL_SERVICE)
 
             for phrase in SEND_GMAIL_STRS:
                 if phrase in text:
-                    logger.info(f"Found {phrase}. in SEND_GMAIL_STRS")
+                    logger.info("Found %s in SEND_GMAIL_STRS" % phrase)
                     send_email_message(GMAIL_SERVICE)
 
             for phrase in BROWSER_STRS:
                 if phrase in text:
-                    logger.info(f"Found {phrase}. in BROWSER_STRS")
+                    logger.info("Found %s in BROWSER_STRS" % phrase)
                     speak(ENGINE, "Which browser?")
                     browser_name = get_audio().lower()
                     open_browser = start_browser(browser_name)
@@ -113,16 +113,16 @@ def main():
 
             for phrase in MATH_STRS:
                 if phrase in text:
-                    logger.info(f"Found {phrase}. in MATH_STRS")
+                    logger.info("Found %s in MATH_STRS" % phrase)
                     result = execute_math(phrase, text)
                     if result == "division by zero":
                         speak(ENGINE, "Hmm, division by zero is impossible")
                     else:
-                        speak(ENGINE, f"it is: {result}")
+                        speak(ENGINE, "it is: %s" % result)
 
             for phrase in COPY_STRS:
                 if phrase in text:
-                    logger.info(f"Found {phrase}. in COPY_STRS")
+                    logger.info("Found %s in COPY_STRS" % phrase)
                     if "copy file" in phrase:
                         path = get_file_path()
                         if len(path) > 1:
@@ -147,25 +147,25 @@ def main():
 
             for phrase in TIME_NOW_STRS:
                 if phrase in text:
-                    logger.info(f"Found {phrase}. in TIME_NOW_STRS")
-                    speak(ENGINE, f"Current time is {datetime.datetime.now().strftime('%H:%M')}")
+                    logger.info("Found %s in TIME_NOW_STRS" % phrase)
+                    speak(ENGINE, "Current time is %s" % datetime.datetime.now().strftime('%H:%M'))
 
             for phrase in TIMER_STRS:
                 if phrase in text:
-                    logger.info(f"Found {phrase}. in TIMER_STRS")
+                    logger.info("Found %s in TIMER_STRS" % phrase)
                     timer_thread = threading.Thread(target=set_timer, args=(text,))
                     timer_thread.start()
 
             for phrase in OPEN_PROGRAM_STRS:
                 if phrase in text:
-                    logger.info(f"Found {phrase}. in OPEN_PROGRAM_STRS")
+                    logger.info("Found %s in OPEN_PROGRAM_STRS" % phrase)
                     print(phrase, text)
                     program_name = text.replace(phrase, '')
                     open_program(program_name)
 
         for phrase in STOP:
             if phrase in text:
-                logger.info(f"Found {phrase}. in STOP")
+                logger.info("Found %s in STOP" % phrase)
                 to_stop.append(phrase)
         if len(to_stop) > 0:
             logger.info("Sarah stops working")

@@ -9,7 +9,11 @@ from google.oauth2.credentials import Credentials
 from google.auth.transport.requests import Request
 from google_auth_oauthlib.flow import InstalledAppFlow
 
+from additional_functions.logger import get_logger
+
 SCOPES = ['https://www.googleapis.com/auth/calendar']
+
+logger = get_logger("google_calendar")
 
 
 def authenticate_google_calendar():
@@ -32,7 +36,7 @@ def authenticate_google_calendar():
 
 
 def get_google_calendar_events(date, google_calendar_service):
-    # logger.info("Getting events from Google Calendar")
+    logger.info("Getting events from Google Calendar")
     date = datetime.datetime.combine(date, datetime.datetime.min.time())
     end_date = datetime.datetime.combine(date, datetime.datetime.max.time())
     utc = pytz.UTC

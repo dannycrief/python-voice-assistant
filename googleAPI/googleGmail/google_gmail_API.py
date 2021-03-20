@@ -10,11 +10,14 @@ from google.oauth2.credentials import Credentials
 from google.auth.transport.requests import Request
 from google_auth_oauthlib.flow import InstalledAppFlow
 
-from additional_functions.VA_config import speak, get_speak_engine, get_audio
+from additional_functions.logger import get_logger
 from additional_functions.before_start import is_valid_email
+from additional_functions.VA_config import speak, get_speak_engine, get_audio
 
 SCOPES = ["https://mail.google.com/"]
 ENGINE = get_speak_engine()
+
+logger = get_logger("google_gmail")
 
 
 def authenticate_google_gmail():
@@ -25,8 +28,7 @@ def authenticate_google_gmail():
         if credentials and credentials.expired and credentials.refresh_token:
             credentials.refresh(Request())
         else:
-            flow = InstalledAppFlow.from_client_secrets_file(
-                'googleAPI/googleGmail/credentials.json', SCOPES)
+            flow = InstalledAppFlow.from_client_secrets_file('googleAPI/googleGmail/credentials.json', SCOPES)
             credentials = flow.run_local_server(port=0)
         with open('googleAPI/googleGmail/secret_token.json', 'w') as token:
             token.write(credentials.to_json())
@@ -63,7 +65,7 @@ def get_unread_gmail_messages(gmail_service):
         delete_message(gmail_service, messages)
 
 
-def mark_as_read(gmail_service, messages):
+def mark_as_read(gmail_service, messages: list):
     speak(ENGINE, "Would you like to mark these messages as read?")
 
     if "yes" in get_audio().lower():
@@ -76,7 +78,7 @@ def mark_as_read(gmail_service, messages):
         speak(ENGINE, "Okay, I won't mark these messages as read.")
 
 
-def delete_message(gmail_service, messages):
+def delete_message(gmail_service, messages: list):
     speak(ENGINE, "Would you like to delete these messages?")
     if "yes" in get_audio().lower():
         speak(ENGINE, "Ok, I'll delete these messages.")
@@ -85,7 +87,6 @@ def delete_message(gmail_service, messages):
             body={"ids": [message["id"] for message in messages]}
         ).execute()
     else:
-        pass
         speak(ENGINE, "Okay, I won't delete these messages.")
 
 
@@ -98,7 +99,7 @@ def send_email_message(gmail_service):
         send_to_user = input("Your email address is:\n")
     speak(ENGINE, "What is the subject of this letter?")
     email_subject = input("Email subject:\n")
-    speak(ENGINE, "Okay, type message or you can just say what you want to send. What you want to do?")
+    speak(ENGINE, "Okay. Do you want to say or type your message? (Say 'type' or 'say')")
     user_response = get_audio().lower()
     if "say" in user_response:
         speak(ENGINE, "What is the content of this message?")
@@ -106,7 +107,7 @@ def send_email_message(gmail_service):
     elif "type" in user_response:
         speak(ENGINE, "What is the content of this message?")
         email_content = input("Your message below:\n")
-    with (open("user_info.pickle", "rb")) as openfile:
+    with open("user_info.pickle", "rb") as openfile:
         try:
             user_email = pickle.load(openfile)["email"]
         except EOFError:
@@ -115,7 +116,6 @@ def send_email_message(gmail_service):
             while not is_valid_email(user_email):
                 speak(ENGINE, "This email is not correct")
                 user_email = input("Your email address is:\n")
-
     message = MIMEText(email_content)
     message["to"] = send_to_user
     message["from"] = user_email
@@ -123,15 +123,8 @@ def send_email_message(gmail_service):
     try:
         gmail_service.users().messages().send(
             userId='me',
-            body={
-                'raw': base64.urlsafe_b64encode(message.as_bytes()).decode()
-            }
+            body={'raw': base64.urlsafe_b64encode(message.as_bytes()).decode()}
         ).execute()
         speak(ENGINE, "Your message has been sent.")
     except errors.MessageError as error:
         print("An ERROR occurred: %s" % error)
-
-
-if __name__ == '__main__':
-    service = authenticate_google_gmail()
-    send_email_message(service)

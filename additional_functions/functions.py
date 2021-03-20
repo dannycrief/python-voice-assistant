@@ -209,7 +209,7 @@ def copy_file(source, destination) -> str:
         return "OK"
     except OSError as exc:
         logger.error("Coping file function with error", exc)
-        return f"Error: {exc}"
+        return "Error: %s" % exc
 
 
 def get_directory_path() -> list:
@@ -237,11 +237,11 @@ def copy_directory(source, destination) -> str:
         os.mkdir(destination)
         distutils.dir_util.copy_tree(source, destination)
     except OSError as exc:
-        logger.warning(f"Cannot copy directory. Error occurred: {exc}")
-        return f"Cannot copy directory. Error occurred: {exc}"
+        logger.warning("Cannot copy directory. Error occurred: %s" % exc)
+        return "Cannot copy directory. Error occurred: %s" % exc
     else:
-        logger.info(f"Directory successfully copied to {destination.removesuffix(folder_name)}")
-        return f"Directory successfully copied to {destination.removesuffix(folder_name)}"
+        logger.info("Directory successfully copied to %s" % destination.removesuffix(folder_name))
+        return "Directory successfully copied to %s" % destination.removesuffix(folder_name)
 
 
 def get_timer(text: str) -> tuple[int, int]:
@@ -278,7 +278,7 @@ def get_timer(text: str) -> tuple[int, int]:
             except Exception as e:
                 e = e.__str__().replace("Illegal word: ", "")
                 second_text = second_text.replace(e, "", 1)
-    logger.info(f"Timer found: {first_number}:{second_number}.")
+    logger.info("Timer found: %s:%s." % (first_number, second_number))
     return first_number, second_number
 
 
@@ -324,16 +324,16 @@ def open_program(program_name: str):
         try:
             os.startfile(programs[program_number])
         except IndexError:
-            logger.error(f"Sarah found {len(programs)} programs, but user tried to open {program_number}")
+            logger.error("Sarah found %s programs, but user tried to open %s" % (len(programs), program_number))
             speak(ENGINE, "I think I found fewer programs.")
         except TypeError as terror:
-            logger.error(f"Cannot open program. Error is: {terror}")
+            logger.error("Cannot open program. Error is: %s" % terror)
             pass
 
     elif len(programs) == 0:
         logger.warning("Sarah cannot find any program")
         speak(ENGINE, "Sorry, I can't find this program.")
     else:
-        logger.info(f"Opening {ntpath.basename(programs[0])}")
-        speak(ENGINE, "Opening {}".format(ntpath.basename(programs[0])))
+        logger.info("Opening %s" % ntpath.basename(programs[0]))
+        speak(ENGINE, "Opening %s" % ntpath.basename(programs[0]))
         os.startfile(programs[0])

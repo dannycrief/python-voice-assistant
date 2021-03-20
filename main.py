@@ -33,8 +33,9 @@ WAKE = "hi sara"
 STOP = ["bye", "see you", "goodbye"]
 CALENDAR_STRS = ["what do i have", "do i have plans", "do i have any plans", "am i busy"]
 EVENT_CALENDAR_STRS = ["create event", "create new event", "add event", "add new event"]
-GMAIL_STRS = ["do I have new messages", "do I have messages", "do I have any messages", "do I have any new messages",
-              "do i have new messages", "do i have messages", "do i have any messages"]
+GMAIL_STRS = ["do I have new messages", "do I have messages", "do I have any messages",
+              "do I have any new messages", "do i have new messages", "do i have messages",
+              "do i have any messages"]
 SEND_GMAIL_STRS = ["send message", "send email"]
 NOTE_STRS = ["make a note", "write this down", "remember this"]
 BROWSER_STRS = ["open browser"]

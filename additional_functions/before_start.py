@@ -76,7 +76,7 @@ def get_user_info_before_begin():
         first_name = input().capitalize()
         speak(ENGINE, "What is your surname?")
         last_name = input().capitalize()
-        speak(ENGINE, f"Nice to meet you {first_name}! I will also need your email for sending your messages")
+        speak(ENGINE, "Nice to meet you %s! I will also need your email for sending your messages" % first_name)
         email = input()
         while not is_valid_email(email):
             answers = ["Please give me correct email", "This email is not correct"]

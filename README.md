@@ -15,7 +15,7 @@ pip install virtualenv
 virtualenv myvenv_name
 myvenv_name\Scripts\activate
 ```
-- Linux: at this moment does not support on OS Linux
+- Linux: at this moment does not support on Linux and macOS
 
 - To make Sarah Voice Assistant work correctly you'll be need to PyAudio library
 - Check you python version
@@ -32,43 +32,36 @@ pip install PyAudio-0.2.11-cp<python version>-cp<python version>-win<64 or 32 bi
 pip install -r requirements.txt
 ```
 ## Configuring Google Calendar API
+
 - Use this [link](https://developers.google.com/calendar/quickstart/python) to enable the Google Calendar Api
 - Click the button "Enable the Google Calendar API"
-- After downloading credentials.json put this file in project root
-- After first running you'll need to accept Google privacy. (Even if browser will show you warning)
+- Next step after downloading credentials.json put this file in project root
+- On first running you'll need to accept Google privacy. (Even if browser will show you warning)
 
 ## Configuring Google  Gmail API
+
 - Use this [link](https://developers.google.com/gmail/api/quickstart/python) to enable the Google Calendar Api
 - Click the button "Enable the Google Calendar API"
-- After downloading credentials.json put this file in project root
-- After first running you'll need to accept Google privacy. (Even if browser will show you warning)
-
-## Configuring Google  Maps API
-- Go to [Google Cloud Console](https://console.cloud.google.com/)
-- Activate next API:
-1. Geocoding API
-2. Directions API
-3. Maps Static API
-4. Distance Matrix API
-5. Geolocation API
-6. Maps Embed API
-- Make sure that you have a billing account set up
+- Next step after downloading credentials.json put this file in project root
+- On first running you'll need to accept Google privacy. (Even if browser will show you warning)
 
 ### Usage
 While you activate your virtual environments, you'll need to run it by typing in terminal from project root
 ```bash
 python main.py
 ```
-- Use "hey Sarah" to wake Sarah.
--Key phrases:
- 1. "what do i have...", "do i have plans...", "am i busy.."
- 2. "make a note", "write this down", "remember this"
- 3. "do i have new messages", "do i have messages"
- 4. "how can i get", "create a road", "create road", "how long do i need to ride"
- 5. "open browser"
+
+- Use "Hi Sarah" to wake Sarah. -Key phrases:
+
+1. "what do I have...", "do I have plans...", "am I busy..."
+2. "make a note", "write this down", "remember this"
+3. "do I have new messages", "do I have messages"
+4. "how can I get", "create a road", "create road", "how long do I need to ride"
+5. "open browser"
 ## Examples using
-- Hey Sarah what do I have on Monday 2nd
-- Hey Sarah make a note
+
+- Hi Sarah what do I have on Monday 2nd
+- Hi Sarah make a note
 ## Contributing
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
 

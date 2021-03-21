@@ -1,3 +1,5 @@
+import pickle
+
 import pyttsx3
 import platform
 import speech_recognition as sr
@@ -35,12 +37,14 @@ def get_speak_engine():
 
 
 def speak(engine, text):
-    print(text)
+    print("Sarah:", text)
     engine.say(text)
     engine.runAndWait()
 
 
 def get_audio():
+    with open('user_info.pickle', 'rb') as token:
+        user_info = pickle.load(token)
     logger.info("Microphone configuring was started")
     r = sr.Recognizer()
     with sr.Microphone() as source:
@@ -49,7 +53,7 @@ def get_audio():
         try:
             logger.info("Recognizing audio with google recognizer")
             said = r.recognize_google(audio)
-            print(said)
+            print(user_info['first_name'], ":", said)
         except Exception:
             logger.warning("Recognizing audio failed")
     return said.lower()

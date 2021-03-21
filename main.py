@@ -29,7 +29,7 @@ GMAIL_SERVICE = authenticate_google_gmail()
 logger.info("Getting speak engine")
 ENGINE = get_speak_engine()
 
-WAKE = "hi sara"
+WAKE = "hi sarah"
 STOP = ["bye", "see you", "goodbye"]
 CALENDAR_STRS = ["what do i have", "do i have plans", "do i have any plans", "am i busy"]
 EVENT_CALENDAR_STRS = ["create event", "create new event", "add event", "add new event"]

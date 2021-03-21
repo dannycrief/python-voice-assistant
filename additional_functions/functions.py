@@ -1,4 +1,5 @@
 import os
+import pickle
 import re
 
 import pytz
@@ -171,20 +172,18 @@ def get_numbers_from_string(phrase, text):
 def execute_math(phrase, text):
     logger.info("Executing math function {}".format(phrase))
     numbers = get_numbers_from_string(phrase, text)
-    first_number = numbers[0]
-    second_number = numbers[1]
     if phrase in ["add", "plus", "+"]:
-        return first_number + second_number
+        return numbers[0] + numbers[1]
     elif phrase in ["subtract", "minus", "-"]:
-        return first_number - second_number
+        return numbers[0] - numbers[1]
     elif phrase in ["divide", "divided by", "/"]:
         try:
-            return first_number / second_number
+            return numbers[0] / numbers[1]
         except ZeroDivisionError as e:
             logger.warning("Zero Division Error")
             return e
     elif phrase in ["multiply", "multiplied by", "times", "*"]:
-        return first_number * second_number
+        return numbers[0] * numbers[1]
 
 
 def get_file_path() -> list:
@@ -196,7 +195,11 @@ def get_file_path() -> list:
         if os.path.isdir(to_path):
             return [from_path, to_path]
         else:
-            return ["File into file"]
+            logger.warning("Copy function cannot copy file to directory %s "
+                           "because it doesn't exist. Creating folder" % to_path)
+            speak(ENGINE, "Folder does not exist. I'll create this folder")
+            os.mkdir(to_path)
+            return [from_path, to_path]
     else:
         return ["Not a file"]
 
@@ -287,13 +290,8 @@ def set_timer(text):
     speak(ENGINE, "Setting a timer")
     timer = get_timer(text)
     seconds = timer[1] + timer[0] * 60
-    t = Timer(float(seconds), say_timer_over)
+    t = Timer(float(seconds), speak(ENGINE, "Timer is done!"))
     t.start()
-
-
-def say_timer_over():
-    logger.info("Timer is done!")
-    speak(ENGINE, "Timer is done!")
 
 
 def start_timer(seconds):

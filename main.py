@@ -137,8 +137,6 @@ def main():
                             speak(ENGINE, "Successfully copied") if copy_file(path[0], path[1]) == "OK" else speak(
                                 ENGINE,
                                 "Cannot copy file because of error")
-                        elif path[0] == "File into file":
-                            speak(ENGINE, "Seriously? Do you want to copy file to file? Think about it")
                         elif path[0] == "Not a file":
                             speak(ENGINE, "Selected item must be a file, but not folder")
                     elif "copy folder" in phrase:

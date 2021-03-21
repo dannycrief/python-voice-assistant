@@ -21,34 +21,42 @@ logger = get_logger("google_gmail")
 
 
 def authenticate_google_gmail():
+    logger.info("Authenticating user to Google Gmail")
     credentials = None
     if os.path.exists('googleAPI/googleGmail/secret_token.json'):
+        logger.info("Secret Gmail token exists. User was found")
         credentials = Credentials.from_authorized_user_file('googleAPI/googleGmail/secret_token.json', SCOPES)
     if not credentials or not credentials.valid:
+        logger.info("Secret Gmail token does not exists. Redirecting user to Google")
         if credentials and credentials.expired and credentials.refresh_token:
+            logger.info("Refreshing Google Gmail token")
             credentials.refresh(Request())
         else:
             flow = InstalledAppFlow.from_client_secrets_file('googleAPI/googleGmail/credentials.json', SCOPES)
             credentials = flow.run_local_server(port=0)
         with open('googleAPI/googleGmail/secret_token.json', 'w') as token:
+            logger.info("Creating new Google Gmail token")
             token.write(credentials.to_json())
-
+        logger.info("New Google Gmail token was created successfully")
     gmail_service = build('gmail', 'v1', credentials=credentials)
     return gmail_service
 
 
 def get_unread_gmail_messages(gmail_service):
     global msg
+    logger.info("Getting unread messages")
     results = gmail_service.users().messages().list(userId='me', labelIds=["INBOX"], q="is:unread").execute()
     messages = results.get('messages', [])
 
     if not messages:
+        logger.info("Zero messages found")
         speak(ENGINE, "You have no messages")
     else:
         message_count = 0
         for message in messages:
             msg = gmail_service.users().messages().get(userId="me", id=message['id']).execute()
             message_count += 1
+        logger.info("%s unread messages found" % str(message_count))
         speak(ENGINE, "You have " + str(message_count) + " unread messages")
         speak(ENGINE, "Would you like to see your messages?")
         if "yes" in get_audio().lower():
@@ -67,9 +75,9 @@ def get_unread_gmail_messages(gmail_service):
 
 def mark_as_read(gmail_service, messages: list):
     speak(ENGINE, "Would you like to mark these messages as read?")
-
     if "yes" in get_audio().lower():
         speak(ENGINE, "Ok, I'll mark these messages as read.")
+        logger.info("Marking messages as read")
         return gmail_service.users().messages().batchModify(
             userId="me",
             body={'removeLabelIds': ["UNREAD"], 'ids': [message["id"] for message in messages]}
@@ -81,6 +89,7 @@ def mark_as_read(gmail_service, messages: list):
 def delete_message(gmail_service, messages: list):
     speak(ENGINE, "Would you like to delete these messages?")
     if "yes" in get_audio().lower():
+        logger.info("Deleting unread messages")
         speak(ENGINE, "Ok, I'll delete these messages.")
         return gmail_service.users().messages().batchDelete(
             userId="me",

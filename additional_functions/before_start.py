@@ -53,8 +53,8 @@ def get_installed_apps_before_begin():
     if not installed_apps:
         logger.info('File with installed programs was not found. Getting installed programs')
         speak(ENGINE,
-              "Hello, my name is Sarah. I am your virtual voice assistant. Give me few minutes to configure settings")
-        print("Sarah starts configuration. Wait a second please.")
+              "Hello, my name is Sarah. I am your virtual voice assistant. Give me few seconds to configure settings")
+        logger.info("Sarah starts configuration.")
         installed_apps = get_installed_programs()
         with open("installed_programs.pickle", "wb") as pickle_file:
             pickle.dump(installed_apps, pickle_file)
@@ -71,7 +71,7 @@ def get_user_info_before_begin():
             speak(ENGINE, "Hello {}!".format(user_info['first_name']))
     if not user_info:
         logger.info("File with user information was not found")
-        print("Getting some information about user for better work")
+        logger.info("Getting some information about user for better work")
         speak(ENGINE, "What is your name?")
         first_name = input().capitalize()
         speak(ENGINE, "What is your surname?")
@@ -90,8 +90,8 @@ def get_user_info_before_begin():
         with open("user_info.pickle", "wb") as pickle_file:
             pickle.dump(user_info, pickle_file)
     logger.info("Got user information. File with user information was successfully created")
-    print("Collected data about user")
-    print("Sarah successfully ended configuration...")
+    logger.info("Collected data about user")
+    logger.info("Sarah successfully ended configuration...")
     return user_info
 
 

@@ -29,7 +29,7 @@ GMAIL_SERVICE = authenticate_google_gmail()
 logger.info("Getting speak engine")
 ENGINE = get_speak_engine()
 
-WAKE = "hi sarah"
+WAKE = ["hi sarah", "hello sarah"]
 STOP = ["bye", "see you", "goodbye"]
 CALENDAR_STRS = ["what do i have", "do i have plans", "do i have any plans", "am i busy"]
 EVENT_CALENDAR_STRS = ["create event", "create new event", "add event", "add new event"]
@@ -55,7 +55,7 @@ def main():
     while True:
         logger.info("Sarah is running.")
         text = get_audio().lower()
-        if text.count(WAKE) > 0:
+        if text in WAKE:
             speak(ENGINE, "Hello, what do you want me to do?")
             text = get_audio().lower()
 

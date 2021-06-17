@@ -16,9 +16,8 @@ def get_speak_engine():
         if platform.system() == "Windows":  # Windows
             logger.info("Configuring voice engine on Windows OS")
             engine = pyttsx3.init()
-            engine.setProperty("rate", 178)
-            voices = engine.getProperty('voices')
-            engine.setProperty('voice', voices[1].id)
+            engine.setProperty("rate", 174)
+            engine.setProperty('voice', engine.getProperty('voices')[1].id)
         elif platform.system() == "Linux":  # Linux
             logger.info("Configuring voice engine on Linux OS")
             engine = pyttsx3.init(driverName='espeak')

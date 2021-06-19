@@ -51,6 +51,10 @@ def get_audio():
             logger.info("Recognizing audio with google recognizer")
             said = r.recognize_google(audio)
             print(user_info['first_name'], ":", said)
-        except Exception:
-            logger.warning("Recognizing audio failed")
+        except sr.UnknownValueError:
+            logger.warning("Google Speech Recognition could not understand audio")
+        except sr.RequestError as e:
+            logger.warning(
+                "Could not request results from Google Speech Recognition service; {0}".format(e)
+            )
     return said.lower()

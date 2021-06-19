@@ -1,9 +1,7 @@
 import pickle
-
 import pyttsx3
 import platform
 import speech_recognition as sr
-
 from additional_functions.logger import get_logger
 
 logger = get_logger("configuration")
@@ -15,7 +13,7 @@ def get_speak_engine():
     try:
         if platform.system() == "Windows":  # Windows
             logger.info("Configuring voice engine on Windows OS")
-            engine = pyttsx3.init()
+            engine = pyttsx3.init(driverName="sapi5", debug=False)
             engine.setProperty("rate", 174)
             engine.setProperty('voice', engine.getProperty('voices')[1].id)
         elif platform.system() == "Linux":  # Linux
@@ -31,7 +29,7 @@ def get_speak_engine():
         logger.error("The pyttsx3 driver fails to initialize with error: ", rError)
         print("The pyttsx3 driver fails to initialize with error.")
     finally:
-        logger.info("Configuring of voice engine was successfully")
+        logger.info("Configuring of voice engine ended with success")
         return engine
 
 

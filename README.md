@@ -4,7 +4,7 @@
 ![GitHub last commit](https://img.shields.io/github/last-commit/dannycrief/python-voice-assistant)
 - Sarah Voice Assistant is a Python voice assistant project on SpeechRecognition, pyttsx3 and GoogleAPI
 - Sarah knows to read data from your Google Calendar (from first running you'll be redirected to Google login page),
-read email from your Gmail, build road using Google Maps, open browse, and write data to file .txt using notepad.exe
+read email from your Gmail, open browsers, write data to file .txt using notepad.exe and many interesning things 😉
 
 ## Installation
 - Clone project

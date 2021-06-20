@@ -270,6 +270,7 @@ def get_timer(text: str) -> tuple[int, int]:
     if not isinstance(text, list):
         text = [text]
     if "second" in text[0] or "seconds" in text[0]:
+        text = text[0].split("second") if "second" in text[0] else text[0].split("seconds")
         second_text = text[0]
         while len(second_text) != 1:
             try:
@@ -287,17 +288,15 @@ def get_timer(text: str) -> tuple[int, int]:
 
 def set_timer(text):
     logger.info("Setting timer.")
-    speak(ENGINE, "Setting a timer")
+    print("Setting a timer")
     timer = get_timer(text)
-    seconds = timer[1] + timer[0] * 60
-    t = Timer(float(seconds), speak(ENGINE, "Timer is done!"))
+    seconds = float(timer[1] + timer[0] * 60)
+    t = Timer(seconds, stop_timer)
     t.start()
 
 
-def start_timer(seconds):
-    logger.info("Starting timer.")
-    for second in range(seconds, 0, -1):
-        time.sleep(1)
+def stop_timer():
+    speak(ENGINE, "Timer is done!")
 
 
 def open_program(program_name: str):
